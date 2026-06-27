@@ -71,7 +71,7 @@ planta_industria_t *pesquisar_industria_por_id(planta_industria_t *industrias, i
 // setores
 int menu_setor(int industria_selecionada);
 int menu_opcao_setor_selecionado(int opcao_setor_selecionado);
-setores_t cadastrar_setor(planta_industria_t *industria);
+setores_t *cadastrar_setor(planta_industria_t *industria);
 void cadastrar_sensor_no_setor(planta_industria_t *industria, int setor, int selecao);
 void listar_setores_por_industria(planta_industria_t *industria);
 int menu_escolha_setor(planta_industria_t *industria);
@@ -81,7 +81,9 @@ void relatorio_de_variacao_por_setor(planta_industria_t *industria, int setor);
 void relatorio_de_leitura_pelo_setor(planta_industria_t *industria, int setor);
 void pesquisar_setor_por_descricao(planta_industria_t *industria);
 // cria um setor vazio
-setores_t criar_setor_de_industria(void);
+setores_t *criar_setor_de_industria(void);
+//cria um sensor vazio
+sensores_t *criar_sensor_de_industria(void);
 
 
 //sensores
@@ -94,7 +96,7 @@ void relatorio_de_leitura_por_tipo(planta_industria_t *industria, int setor);
 void relatorio_da_media_dos_setores(planta_industria_t *industria);
 void relatorio_de_leitura_por_sensor(planta_industria_t *industria, int setor, int sensor);
 void pesquisar_sensor_por_tipo(planta_industria_t *industria);
-sensores_t cadastrar_sensor(planta_industria_t *industria);
+sensores_t *cadastrar_sensor(planta_industria_t *industria);
 void listar_sensores_por_industria(planta_industria_t *industria);
 
 // funções auxiliares
@@ -163,10 +165,12 @@ int main(){
                                 case 1:
                                     do{
                                         limpar_tela();
-                                        // opcao_setor = menu_setor(selecao1);
+                                        opcao_setor = menu_setor(selecao1);
                                         switch (opcao_setor){
                                             case 1:
                                                 getchar();
+                                                criar_setor_de_industria();
+                                                industria_atual->setores_da_planta = cadastrar_setor(industria_atual);
                                                 // industrias[selecao1].setores_da_planta[industrias[selecao1].qtd_setores_na_planta] = cadastrar_setor(&industrias[selecao1]);
                                                 break;
                                             case 2: 
@@ -336,6 +340,8 @@ int main(){
                                         {
                                         case 1:
                                             getchar();
+                                            criar_sensor_de_industria();
+                                            industria_atual->tipos_de_sensores = cadastrar_sensor(industria_atual);
                                             //industrias[selecao1].tipos_de_sensores[industrias[selecao1].qtd_sensores_na_planta] = cadastrar_sensor(&industrias[selecao1]);
                                             break;
                                         case 2:
@@ -453,7 +459,7 @@ void listar_industrias(planta_industria_t *industria, int qtd_industrias){
         printf("Quantidade de setores cadastrados\t \033[1;32m%i\033[0m\n", industria->qtd_setores_na_planta);
         printf("Quantidade de sensores cadastrados\t \033[1;32m%i\033[0m\n", industria->qtd_sensores_na_planta);
     }
-    printf("===================\n\n");
+    printf("=====================\n\n");
 }
 
 planta_industria_t *pesquisar_industria_por_id(planta_industria_t *industrias, int id_industria){
@@ -487,23 +493,32 @@ int menu_setor(int industria_slecionada){
     return opcao;
 }
 
-setores_t criar_setor_de_industria(void){
-    setores_t setor_zerado;
+setores_t *criar_setor_de_industria(void){
+    setores_t *setor_zerado = (setores_t *)malloc(sizeof(setores_t));
+    if(setor_zerado == NULL){
+        printf("Erro ao alocar memoria para o setor!\n");
+        exit(1);
+    }
 
-    setor_zerado.qtd_sensores_no_setor = 0;
-    setor_zerado.descricao[0] = '\0';
+    setor_zerado->qtd_sensores_no_setor = 0;
+    setor_zerado->descricao[0] = '\0';
     return setor_zerado;
 }
 
-setores_t cadastrar_setor(planta_industria_t *industria){
+setores_t *cadastrar_setor(planta_industria_t *industria){
+    setores_t *setor_auxiliar = malloc(sizeof(setores_t));
+    if(setor_auxiliar == NULL){
+        printf("Erro ao alocar memoria para o setor!\n");
+        exit(1);
+    }
     if(industria->qtd_setores_na_planta < 5){
-        setores_t setor_auxiliar = criar_setor_de_industria();
-        setor_auxiliar.id_do_setor = industria->qtd_setores_na_planta;
+        setores_t *setor_auxiliar = criar_setor_de_industria();
+        setor_auxiliar->id_do_setor = industria->qtd_setores_na_planta;
         industria->qtd_setores_na_planta = industria->qtd_setores_na_planta + 1; //atualizando a quantidade de setores na industria selecionada
-        printf("| Cadastro do setor %i |\n", setor_auxiliar.id_do_setor);
+        printf("| Cadastro do setor %i |\n", setor_auxiliar->id_do_setor);
         printf("Descricao do setor:\t\t ");
-        fgets(setor_auxiliar.descricao, T_MAX_STR, stdin);
-        retirar_enter(setor_auxiliar.descricao);
+        fgets(setor_auxiliar->descricao, T_MAX_STR, stdin);
+        retirar_enter(setor_auxiliar->descricao);
         return setor_auxiliar;
     }
     else{
@@ -511,8 +526,6 @@ setores_t cadastrar_setor(planta_industria_t *industria){
         usleep(1000000);
     }
 }
-
-
 
 void listar_setores_por_industria(planta_industria_t *industria){
     printf("===================\n");
@@ -524,11 +537,6 @@ void listar_setores_por_industria(planta_industria_t *industria){
     }
     printf("===================\n\n");
 }
-
-
-
-
-
 
 int menu_setor_sensor(int industria){
     int opcao;
@@ -544,7 +552,6 @@ int menu_setor_sensor(int industria){
     return opcao;
 }
 
-
 int menu_escolha_setor(planta_industria_t *industria){
     int opcao;
     
@@ -556,7 +563,6 @@ int menu_escolha_setor(planta_industria_t *industria){
     }
     return opcao;
 }
-
 
 int menu_opcao_setor_selecionado(int opcao_setor_selecionado){
     int opcao;
@@ -576,7 +582,6 @@ int menu_opcao_setor_selecionado(int opcao_setor_selecionado){
     return opcao;
 }
 
-
 int menu_sensores(int industria_selecionada){
     int opcao;
     printf("\t| Menu - Sensores |\n");
@@ -593,47 +598,46 @@ int menu_sensores(int industria_selecionada){
     return opcao;
 }
 
-sensores_t criar_sensor_de_industria(void){
-    sensores_t sensor_zerado;
+sensores_t *criar_sensor_de_industria(void){
+    sensores_t *sensor_zerado = NULL;
 
-    sensor_zerado.faixa_leitura[0] = 0;
-    sensor_zerado.faixa_leitura[1] = 0;
-    sensor_zerado.numero_da_leitura = 1;
-    sensor_zerado.tipo[0] = '\0';
-    sensor_zerado.variacao_leitura = 0;
-    sensor_zerado.media = 0;
+    sensor_zerado->faixa_leitura[0] = 0;
+    sensor_zerado->faixa_leitura[1] = 0;
+    sensor_zerado->numero_da_leitura = 1;
+    sensor_zerado->tipo[0] = '\0';
+    sensor_zerado->variacao_leitura = 0;
+    sensor_zerado->media = 0;
     return sensor_zerado;
 }
 
-
-sensores_t cadastrar_sensor(planta_industria_t *industria){
-    sensores_t sensor_auxiliar = criar_sensor_de_industria();
+sensores_t *cadastrar_sensor(planta_industria_t *industria){
+    sensores_t *sensor_auxiliar = criar_sensor_de_industria();
     string escolha_temp;
     if(industria->qtd_sensores_na_planta < 15){
-        sensor_auxiliar.id_do_sensor = industria->qtd_sensores_na_planta;
+        sensor_auxiliar->id_do_sensor = industria->qtd_sensores_na_planta;
         industria->qtd_sensores_na_planta = industria->qtd_sensores_na_planta + 1; //atualizando a quantidade de sensores na industria selecionada
-        printf("| Cadastro do tipo de sensor %i |\n", sensor_auxiliar.id_do_sensor);
+        printf("| Cadastro do tipo de sensor %i |\n", sensor_auxiliar->id_do_sensor);
         printf("Tipo do sensor:\t\t ");
-        fgets(sensor_auxiliar.tipo, T_MAX_STR, stdin);
+        fgets(sensor_auxiliar->tipo, T_MAX_STR, stdin);
         printf("Faixa de leitura minima do sensor:\t ");
-        retirar_enter(sensor_auxiliar.tipo);
-        while(scanf("%f", &sensor_auxiliar.faixa_leitura[0]) != 1){
+        retirar_enter(sensor_auxiliar->tipo);
+        while(scanf("%f", &sensor_auxiliar->faixa_leitura[0]) != 1){
             printf("Entrada invalida! Digite novamente: ");
             while(getchar() != '\n'); // limpa
         }
         printf("Faixa de leitura maxima do sensor:\t ");
-        while(scanf("%f", &sensor_auxiliar.faixa_leitura[1]) != 1){
+        while(scanf("%f", &sensor_auxiliar->faixa_leitura[1]) != 1){
             printf("Entrada invalida! Digite novamente: ");
             while(getchar() != '\n'); // limpa
         }
         getchar();
-        while(sensor_auxiliar.faixa_leitura[0] == sensor_auxiliar.faixa_leitura[1]){
+        while(sensor_auxiliar->faixa_leitura[0] == sensor_auxiliar->faixa_leitura[1]){
             printf("\033[31mFaixas de leitura maxima e minima apresentam valores iguais, tem certeza que deseja cadastra-lo? [S/N]\033[0m ");
             fgets(escolha_temp, T_MAX_STR, stdin);
             retirar_enter(escolha_temp);
             if (!(strcmp(escolha_temp, "N"))){
                 printf("Faixa de leitura maxima do sensor:\t ");
-                while(scanf("%f", &sensor_auxiliar.faixa_leitura[1]) != 1){
+                while(scanf("%f", &sensor_auxiliar->faixa_leitura[1]) != 1){
                 printf("Entrada invalida! Digite novamente: ");
                 while(getchar() != '\n'); // limpa
                 }
@@ -642,10 +646,10 @@ sensores_t cadastrar_sensor(planta_industria_t *industria){
                 break;
             }
         }
-        while(sensor_auxiliar.faixa_leitura[0] > sensor_auxiliar.faixa_leitura[1]){
+        while(sensor_auxiliar->faixa_leitura[0] > sensor_auxiliar->faixa_leitura[1]){
             printf("\033[31mFaixa de leitura minima apresentam valor maior que a maxima\033[0m\n");
                 printf("Faixa de leitura maxima do sensor:\t ");
-                while(scanf("%f", &sensor_auxiliar.faixa_leitura[1]) != 1){
+                while(scanf("%f", &sensor_auxiliar->faixa_leitura[1]) != 1){
                 printf("Entrada invalida! Digite novamente: ");
                 while(getchar() != '\n'); // limpa
                 }
