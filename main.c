@@ -66,7 +66,8 @@ void inserir_industria(planta_industria_t **industrias, planta_industria_t *nova
 int menu_setor_sensor(int industria);
 // cria uma planta vazia
 planta_industria_t *criar_planta_de_industria(void);
-
+// pesquisa por id
+planta_industria_t *pesquisar_industria_por_id(planta_industria_t *industrias, int id_industria);
 // setores
 int menu_setor(int industria_selecionada);
 int menu_opcao_setor_selecionado(int opcao_setor_selecionado);
@@ -133,7 +134,7 @@ int main(){
             case 2:
                 limpar_tela();
                 if(qtd_industrias > 0){      
-                listar_industrias(industrias, qtd_industrias); // Mudar pra alloc dinamic 
+                listar_industrias(industrias, qtd_industrias); 
                 }
                 else{
                     printf("\033[31mAinda nao ha industrias cadastradas\n\033[0m");
@@ -141,10 +142,11 @@ int main(){
                 esperar_prosseguir();
                 break;
             case 3:
+                printf("qtd: %i \n", qtd_industrias);
                 limpar_tela();
                 if(qtd_industrias > 0){
                     printf("Industrias disponiveis: \n");
-                    listar_industrias(industrias, qtd_industrias); // Mudar pra alloc dinamic 
+                    listar_industrias(industrias, qtd_industrias);  
                     printf("Industria selecionada: ");
                     while(scanf("%i", &selecao1) != 1){
                         printf("Entrada invalida! Digite novamente: ");
@@ -452,6 +454,15 @@ void listar_industrias(planta_industria_t *industria, int qtd_industrias){
     printf("===================\n\n");
 }
 
+planta_industria_t *pesquisar_industria_por_id(planta_industria_t *industrias, int id_industria){
+    for(industrias; industrias != NULL; industrias = industrias->prox){
+        if(industrias->id_da_planta == id_industria){
+            return industrias;
+        }
+    }
+    return NULL;
+}
+
 int menu_setor(int industria_slecionada){
     int opcao;
     printf("\t| Menu - Setor |\n");
@@ -668,6 +679,8 @@ void listar_sensores_por_setor(planta_industria_t *industria, int setor){
     }
     printf("===================\n\n");
 }
+
+
 
 void cadastrar_sensor_no_setor(planta_industria_t *industria, int setor, int selecao){
     int sensor_escolhido;
