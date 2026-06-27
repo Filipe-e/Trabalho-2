@@ -105,6 +105,7 @@ void limpar_tela(void);
 
 
 int main(){
+    planta_industria_t *industria_atual = NULL;
     int qtd_industrias = 0;
     int opcao_main, setor_selecionado;
     string selecao_temp;
@@ -156,7 +157,8 @@ int main(){
                         do{
                             usleep(1000000);
                             limpar_tela();
-                            //selecao2 = menu_setor_sensor(selecao1);
+                            selecao2 = menu_setor_sensor(selecao1); 
+                            industria_atual = pesquisar_industria_por_id(industrias, selecao1);
                             switch (selecao2){
                                 case 1:
                                     do{
