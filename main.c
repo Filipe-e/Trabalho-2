@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
@@ -63,6 +62,7 @@ typedef struct planta_industria{
 int menu_industria(void);
 planta_industria_t *cadastrar_industria(int qtd_industrias);
 void listar_industrias(planta_industria_t *industria, int qtd_industrias);
+void inserir_industria(planta_industria_t **industrias, planta_industria_t *nova_industria);
 int menu_setor_sensor(int industria);
 // cria uma planta vazia
 planta_industria_t *criar_planta_de_industria(void);
@@ -107,7 +107,9 @@ int main(){
     int qtd_industrias = 0;
     int opcao_main, setor_selecionado;
     string selecao_temp;
-    planta_industria_t *industrias;
+    planta_industria_t *industrias = NULL;
+    planta_industria_t *industria_zerada = NULL;
+    industria_zerada = malloc(sizeof(planta_industria_t));
     do{
         limpar_tela();
         opcao_main = menu_industria();
@@ -115,9 +117,11 @@ int main(){
         int opcao_setor, opcao_sensor;
         switch (opcao_main){
             case 1:
+                
                 limpar_tela();
                 if(qtd_industrias < T_MAX_INDUSTRIAS){
-                    cadastrar_industria(qtd_industrias);
+                    planta_industria_t *nova = cadastrar_industria(qtd_industrias);
+                    inserir_industria(&industrias, nova);
                     qtd_industrias++;
                 }
                 else{
@@ -128,8 +132,8 @@ int main(){
                 break;
             case 2:
                 limpar_tela();
-                if(qtd_industrias > 0){
-                    //listar_industrias(industrias); // Mudar pra alloc dinamic 
+                if(qtd_industrias > 0){      
+                listar_industrias(industrias, qtd_industrias); // Mudar pra alloc dinamic 
                 }
                 else{
                     printf("\033[31mAinda nao ha industrias cadastradas\n\033[0m");
@@ -156,7 +160,6 @@ int main(){
                                     do{
                                         limpar_tela();
                                         // opcao_setor = menu_setor(selecao1);
-                                        
                                         switch (opcao_setor){
                                             case 1:
                                                 getchar();
@@ -390,7 +393,7 @@ int main(){
                 break;
         }
 
-    }while(opcao_main);
+    }while(opcao_main != 0);
 }
 
 
@@ -413,9 +416,7 @@ int menu_industria(void){
 
 
 planta_industria_t *criar_planta_de_industria(){
-    planta_industria_t *industria_zerada;
-
-    industria_zerada = malloc(sizeof(planta_industria_t));
+    planta_industria_t *industria_zerada = malloc(sizeof(planta_industria_t));
 
     industria_zerada->qtd_sensores_na_planta = 0;
     industria_zerada->qtd_setores_na_planta = 0;
