@@ -23,7 +23,8 @@ typedef char string[T_MAX_STR];
 typedef struct tipo_sensores{
     int id_do_sensor;
     string tipo;
-    float faixa_leitura[2];
+    float faixa_leitura_1;
+    float faixa_leitura_2;
     int numero_da_leitura;
     float primeira_leitura;
     string horario_1;
@@ -63,6 +64,7 @@ int menu_industria(void);
 planta_industria_t *cadastrar_industria(int qtd_industrias);
 void listar_industrias(planta_industria_t *industria, int qtd_industrias);
 void inserir_industria(planta_industria_t **industrias, planta_industria_t *nova_industria);
+void inserir_sensor_na_industria(sensores_t **tipos_de_sensores, sensores_t *sensor_novo);
 int menu_setor_sensor(int industria);
 // cria uma planta vazia
 planta_industria_t *criar_planta_de_industria(void);
@@ -340,15 +342,14 @@ int main(){
                                         {
                                         case 1:
                                             getchar();
-                                            criar_sensor_de_industria();
-                                            industria_atual->tipos_de_sensores = cadastrar_sensor(industria_atual);
+                                            inserir_sensor_na_industria(&(industria_atual->tipos_de_sensores), cadastrar_sensor(industria_atual));
                                             //industrias[selecao1].tipos_de_sensores[industrias[selecao1].qtd_sensores_na_planta] = cadastrar_sensor(&industrias[selecao1]);
                                             break;
                                         case 2:
-                                            /*
-                                            if(industrias[selecao1].qtd_sensores_na_planta > 0){
-                                                listar_sensores_por_industria(&industrias[selecao1]);
-                                                esperar_prosseguir();}
+                                            if(industria_atual->qtd_sensores_na_planta > 0){
+                                                listar_sensores_por_industria(industria_atual);
+                                                esperar_prosseguir();
+                                            }
                                             else{ 
                                                 getchar();
                                                 printf("\033[1;31mAinda nao ha sensores cadastrados!\033[0m\n");
@@ -356,10 +357,9 @@ int main(){
                                                 fgets(selecao_temp, T_MAX_STR, stdin);
                                                 retirar_enter(selecao_temp);
                                                 if(!strcmp(selecao_temp, "S")){
-                                                    industrias[selecao1].tipos_de_sensores[industrias[selecao1].qtd_sensores_na_planta] = cadastrar_sensor(&industrias[selecao1]);
+                                                    cadastrar_sensor(industria_atual);
                                                 }
                                             }
-                                            */
                                             break;
                                         case 3:
                                             // pesquisar_sensor_por_tipo(&industrias[selecao1]);
@@ -449,6 +449,12 @@ void inserir_industria(planta_industria_t **industrias, planta_industria_t *nova
     
     nova_industria->prox = *industrias;
     *industrias = nova_industria;
+}
+
+void inserir_sensor_na_industria(sensores_t **tipos_de_sensores, sensores_t *sensor_novo){
+
+    sensor_novo->prox = *tipos_de_sensores;
+    *tipos_de_sensores = sensor_novo;
 }
 
 void listar_industrias(planta_industria_t *industria, int qtd_industrias){
@@ -601,8 +607,8 @@ int menu_sensores(int industria_selecionada){
 sensores_t *criar_sensor_de_industria(void){
     sensores_t *sensor_zerado = NULL;
 
-    sensor_zerado->faixa_leitura[0] = 0;
-    sensor_zerado->faixa_leitura[1] = 0;
+    sensor_zerado->faixa_leitura_1 = 0;
+    sensor_zerado->faixa_leitura_2 = 0;
     sensor_zerado->numero_da_leitura = 1;
     sensor_zerado->tipo[0] = '\0';
     sensor_zerado->variacao_leitura = 0;
@@ -613,7 +619,7 @@ sensores_t *criar_sensor_de_industria(void){
 sensores_t *cadastrar_sensor(planta_industria_t *industria){
     sensores_t *sensor_auxiliar = criar_sensor_de_industria();
     string escolha_temp;
-    if(industria->qtd_sensores_na_planta < 15){
+    if(industria-> qtd_sensores_na_planta < 15){
         sensor_auxiliar->id_do_sensor = industria->qtd_sensores_na_planta;
         industria->qtd_sensores_na_planta = industria->qtd_sensores_na_planta + 1; //atualizando a quantidade de sensores na industria selecionada
         printf("| Cadastro do tipo de sensor %i |\n", sensor_auxiliar->id_do_sensor);
@@ -621,23 +627,23 @@ sensores_t *cadastrar_sensor(planta_industria_t *industria){
         fgets(sensor_auxiliar->tipo, T_MAX_STR, stdin);
         printf("Faixa de leitura minima do sensor:\t ");
         retirar_enter(sensor_auxiliar->tipo);
-        while(scanf("%f", &sensor_auxiliar->faixa_leitura[0]) != 1){
+        while(scanf("%f", &sensor_auxiliar->faixa_leitura_1) != 1){
             printf("Entrada invalida! Digite novamente: ");
             while(getchar() != '\n'); // limpa
         }
         printf("Faixa de leitura maxima do sensor:\t ");
-        while(scanf("%f", &sensor_auxiliar->faixa_leitura[1]) != 1){
+        while(scanf("%f", &sensor_auxiliar->faixa_leitura_2) != 1){
             printf("Entrada invalida! Digite novamente: ");
             while(getchar() != '\n'); // limpa
         }
         getchar();
-        while(sensor_auxiliar->faixa_leitura[0] == sensor_auxiliar->faixa_leitura[1]){
+        while(sensor_auxiliar->faixa_leitura_1 == sensor_auxiliar->faixa_leitura_2){
             printf("\033[31mFaixas de leitura maxima e minima apresentam valores iguais, tem certeza que deseja cadastra-lo? [S/N]\033[0m ");
             fgets(escolha_temp, T_MAX_STR, stdin);
             retirar_enter(escolha_temp);
             if (!(strcmp(escolha_temp, "N"))){
                 printf("Faixa de leitura maxima do sensor:\t ");
-                while(scanf("%f", &sensor_auxiliar->faixa_leitura[1]) != 1){
+                while(scanf("%f", &sensor_auxiliar->faixa_leitura_2) != 1){
                 printf("Entrada invalida! Digite novamente: ");
                 while(getchar() != '\n'); // limpa
                 }
@@ -646,10 +652,10 @@ sensores_t *cadastrar_sensor(planta_industria_t *industria){
                 break;
             }
         }
-        while(sensor_auxiliar->faixa_leitura[0] > sensor_auxiliar->faixa_leitura[1]){
+        while(sensor_auxiliar->faixa_leitura_1 > sensor_auxiliar->faixa_leitura_2){
             printf("\033[31mFaixa de leitura minima apresentam valor maior que a maxima\033[0m\n");
                 printf("Faixa de leitura maxima do sensor:\t ");
-                while(scanf("%f", &sensor_auxiliar->faixa_leitura[1]) != 1){
+                while(scanf("%f", &sensor_auxiliar->faixa_leitura_2) != 1){
                 printf("Entrada invalida! Digite novamente: ");
                 while(getchar() != '\n'); // limpa
                 }
@@ -666,10 +672,10 @@ sensores_t *cadastrar_sensor(planta_industria_t *industria){
 void listar_sensores_por_industria(planta_industria_t *industria){
     printf("===================\n");
     printf("Lista de Sensores: \n");
-    for(int i = 0; i < industria->qtd_sensores_na_planta; i++){
-        printf("Sensor\t \033[1;32m[%i]\033[0m\n", i);
-        printf("Tipo:\t \033[1;32m%s\033[0m\n", industria->tipos_de_sensores[i].tipo);
-        printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", industria->tipos_de_sensores[i].faixa_leitura[0], industria->tipos_de_sensores[i].faixa_leitura[1]);
+    for(industria; industria !=NULL ; industria = industria->prox){
+        printf("Sensor\t \033[1;32m[%i]\033[0m\n", industria->tipos_de_sensores->id_do_sensor);
+        printf("Tipo:\t \033[1;32m%s\033[0m\n", industria->tipos_de_sensores->tipo);
+        printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", industria->tipos_de_sensores->faixa_leitura_1, industria->tipos_de_sensores->faixa_leitura_2);
     }
     printf("===================\n\n");
 }
@@ -681,7 +687,7 @@ void listar_sensores_por_setor(planta_industria_t *industria, int setor){
         printf("Sensor numero \033[1;32m[%i]\033[0m\n", i);
         printf("Sensor\t \033[1;32m[%i]\033[0m\n", industria->setores_da_planta[setor].sensores_do_setor[i].id_do_sensor);
         printf("Tipo:\t \033[1;32m%s\033[0m\n", industria->setores_da_planta[setor].sensores_do_setor[i].tipo);
-        printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", industria->setores_da_planta[setor].sensores_do_setor[i].faixa_leitura[0], industria->setores_da_planta[setor].sensores_do_setor[i].faixa_leitura[1]);
+        printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", industria->setores_da_planta[setor].sensores_do_setor[i].faixa_leitura_1, industria->setores_da_planta[setor].sensores_do_setor[i].faixa_leitura_2);
     }
     printf("===================\n\n");
 }
@@ -751,7 +757,7 @@ void leitura_do_sensor(sensores_t *sensor){
                 printf("Entrada invalida! Digite novamente: ");
                 while(getchar() != '\n'); // limpa
             }
-            if(sensor->primeira_leitura <= sensor->faixa_leitura[1] && sensor->primeira_leitura >= sensor->faixa_leitura[0]){
+            if(sensor->primeira_leitura <= sensor->faixa_leitura_2 && sensor->primeira_leitura >= sensor->faixa_leitura_1){
                 leitura = 0;
             }    
         }
@@ -760,7 +766,7 @@ void leitura_do_sensor(sensores_t *sensor){
                 printf("Entrada invalida! Digite novamente: ");
                 while(getchar() != '\n'); // limpa
             }
-            if(sensor->segunda_leitura <= sensor->faixa_leitura[1] && sensor->segunda_leitura >= sensor->faixa_leitura[0]){
+            if(sensor->segunda_leitura <= sensor->faixa_leitura_2 && sensor->segunda_leitura >= sensor->faixa_leitura_1){
                     leitura = 0;
                     sensor->variacao_leitura = sensor->segunda_leitura - sensor->primeira_leitura;
                     sensor->media = (sensor->primeira_leitura + sensor->segunda_leitura) / 2;
@@ -808,7 +814,7 @@ void relatorio_de_leitura_por_setor(planta_industria_t *industria){
                     printf("Sensor numero \033[1;32m[%i]\033[0m\n", i);
                     printf("Sensor\t \033[1;32m[%i]\033[0m\n", industria->setores_da_planta[j].sensores_do_setor[i].id_do_sensor);
                     printf("Tipo:\t \033[1;32m%s\033[0m\n", industria->setores_da_planta[j].sensores_do_setor[i].tipo);
-                    printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", industria->setores_da_planta[j].sensores_do_setor[i].faixa_leitura[0], industria->setores_da_planta[j].sensores_do_setor[i].faixa_leitura[1]);
+                    printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", industria->setores_da_planta[j].sensores_do_setor[i].faixa_leitura_1, industria->setores_da_planta[j].sensores_do_setor[i].faixa_leitura_2);
                     if(industria->setores_da_planta[j].sensores_do_setor[i].numero_da_leitura > 1){
                         printf("Primeira Leitura: \n");
                         printf("[%s]\n", industria->setores_da_planta[j].sensores_do_setor[i].horario_1);
@@ -846,7 +852,7 @@ void relatorio_de_leitura_pelo_setor(planta_industria_t *industria, int setor){
                 printf("Sensor numero \033[1;32m[%i]\033[0m\n", i);
                 printf("Sensor\t \033[1;32m[%i]\033[0m\n", industria->setores_da_planta[setor].sensores_do_setor[i].id_do_sensor);
                 printf("Tipo:\t \033[1;32m%s\033[0m\n", industria->setores_da_planta[setor].sensores_do_setor[i].tipo);
-                printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", industria->setores_da_planta[setor].sensores_do_setor[i].faixa_leitura[0], industria->setores_da_planta[setor].sensores_do_setor[i].faixa_leitura[1]);
+                printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", industria->setores_da_planta[setor].sensores_do_setor[i].faixa_leitura_1, industria->setores_da_planta[setor].sensores_do_setor[i].faixa_leitura_2);
                 if(industria->setores_da_planta[setor].sensores_do_setor[i].numero_da_leitura > 1){
                     printf("Primeira Leitura: \n");
                     printf("[%s]\n", industria->setores_da_planta[setor].sensores_do_setor[i].horario_1);
@@ -888,7 +894,7 @@ void relatorio_de_leitura_por_tipo(planta_industria_t *industria, int setor){
                 printf("Sensor numero \033[1;32m[%i]\033[0m\n", i);
                 printf("Sensor\t \033[1;32m[%i]\033[0m\n", industria->setores_da_planta[setor].sensores_do_setor[i].id_do_sensor);
                 printf("Tipo:\t \033[1;32m%s\033[0m\n", industria->setores_da_planta[setor].sensores_do_setor[i].tipo);
-                printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", industria->setores_da_planta[setor].sensores_do_setor[i].faixa_leitura[0], industria->setores_da_planta[setor].sensores_do_setor[i].faixa_leitura[1]);
+                printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", industria->setores_da_planta[setor].sensores_do_setor[i].faixa_leitura_1, industria->setores_da_planta[setor].sensores_do_setor[i].faixa_leitura_2);
                 if(industria->setores_da_planta[setor].sensores_do_setor[i].numero_da_leitura > 1){
                     printf("Primeira Leitura: \n");
                     printf("[%s]\n", industria->setores_da_planta[setor].sensores_do_setor[i].horario_1);
@@ -1020,7 +1026,7 @@ void pesquisar_sensor_por_tipo(planta_industria_t *industria){
                 if(!(strcmp(tipo, industria->tipos_de_sensores[i].tipo))){
                     printf("Sensor\t \033[1;32m[%i]\033[0m\n", industria->tipos_de_sensores[i].id_do_sensor);
                     printf("Tipo:\t \033[1;32m%s\033[0m\n", industria->tipos_de_sensores[i].tipo);
-                    printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", industria->tipos_de_sensores[i].faixa_leitura[0], industria->tipos_de_sensores[i].faixa_leitura[1]);
+                    printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", industria->tipos_de_sensores[i].faixa_leitura_1, industria->tipos_de_sensores[i].faixa_leitura_2);
                     printf("=================================\n\n"); 
                     sensor_nao_encontrado = 0; // nega a expressao se ele for encontrado
                 }
