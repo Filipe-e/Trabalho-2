@@ -65,6 +65,7 @@ planta_industria_t *cadastrar_industria(int qtd_industrias);
 void listar_industrias(planta_industria_t *industria, int qtd_industrias);
 void inserir_industria(planta_industria_t **industrias, planta_industria_t *nova_industria);
 void inserir_sensor_na_industria(sensores_t **tipos_de_sensores, sensores_t *sensor_novo);
+void inserir_setor_na_industria(setores_t **setores_da_planta, setores_t *setor_novo);
 int menu_setor_sensor(int industria);
 // cria uma planta vazia
 planta_industria_t *criar_planta_de_industria(void);
@@ -74,18 +75,20 @@ planta_industria_t *pesquisar_industria_por_id(planta_industria_t *industrias, i
 int menu_setor(int industria_selecionada);
 int menu_opcao_setor_selecionado(int opcao_setor_selecionado);
 setores_t *cadastrar_setor(planta_industria_t *industria);
-void cadastrar_sensor_no_setor(planta_industria_t *industria, int setor, int selecao);
-void listar_setores_por_industria(planta_industria_t *industria);
+sensores_t criar_uma_copia(sensores_t *tipo_de_sensor);
+void listar_setores_por_industria(setores_t *industria);
 int menu_escolha_setor(planta_industria_t *industria);
 void listar_sensores_por_setor(planta_industria_t *industria, int setor);
 void relatorio_de_leitura_por_setor(planta_industria_t *industria);
 void relatorio_de_variacao_por_setor(planta_industria_t *industria, int setor);
 void relatorio_de_leitura_pelo_setor(planta_industria_t *industria, int setor);
-void pesquisar_setor_por_descricao(planta_industria_t *industria);
+void pesquisar_setor_por_descricao(setores_t *setor, int qtd_setores_no_sensor);
+setores_t *pesquisar_setor_por_id(setores_t *setores_da_planta , int id_do_setor);
 // cria um setor vazio
 setores_t *criar_setor_de_industria(void);
 //cria um sensor vazio
 sensores_t *criar_sensor_de_industria(void);
+
 
 
 //sensores
@@ -101,6 +104,9 @@ void pesquisar_sensor_por_tipo(sensores_t *tipo_sensores, int qtd_sensores_na_pl
 sensores_t *cadastrar_sensor(planta_industria_t *industria);
 void listar_sensores_por_industria(sensores_t *industria);
 
+//setores
+void inserir_sensor_no_setor(setores_t **sensores_no_setor, sensores_t *tipo_de_sensor);
+
 // funções auxiliares
 void retirar_enter(string str);
 void esperar_prosseguir(void);
@@ -109,6 +115,7 @@ void limpar_tela(void);
 
 
 int main(){
+    setores_t *setor_atual = NULL;
     planta_industria_t *industria_atual = NULL;
     int qtd_industrias = 0;
     int opcao_main, setor_selecionado;
@@ -172,13 +179,12 @@ int main(){
                                             case 1:
                                                 getchar();
                                                 criar_setor_de_industria();
-                                                industria_atual->setores_da_planta = cadastrar_setor(industria_atual);
+                                                inserir_setor_na_industria(&(industria_atual->setores_da_planta), cadastrar_setor(industria_atual));
                                                 // industrias[selecao1].setores_da_planta[industrias[selecao1].qtd_setores_na_planta] = cadastrar_setor(&industrias[selecao1]);
                                                 break;
-                                            case 2: 
-                                                /*
-                                                if(industrias[selecao1].qtd_setores_na_planta > 0){
-                                                    listar_setores_por_industria(&industrias[selecao1]);
+                                            case 2:   
+                                                if(industria_atual->qtd_setores_na_planta  > 0){
+                                                    listar_setores_por_industria(industria_atual->setores_da_planta);
                                                     esperar_prosseguir();
                                                 }
                                                 else{
@@ -188,29 +194,26 @@ int main(){
                                                     fgets(selecao_temp, T_MAX_STR, stdin);
                                                     retirar_enter(selecao_temp);
                                                     if(!strcmp(selecao_temp, "S")){
-                                                        industrias[selecao1].setores_da_planta[industrias[selecao1].qtd_setores_na_planta] = cadastrar_setor(&industrias[selecao1]);
+                                                        inserir_setor_na_industria(&(industria_atual->setores_da_planta), cadastrar_setor(industria_atual));
                                                     }
                                                 }
                                                 break;
-                                                */
                                             case 3:
-                                            /*
-                                                if(industrias[selecao1].qtd_setores_na_planta > 0){
+                                                if(industria_atual->qtd_setores_na_planta > 0){
                                                         printf("Setores diposniveis:\n");
-                                                        listar_setores_por_industria(&industrias[selecao1]);    
+                                                        listar_setores_por_industria(industria_atual->setores_da_planta);    
                                                         setor_selecionado = menu_escolha_setor(&industrias[selecao1]);
-                                                        if(setor_selecionado < industrias[selecao1].qtd_setores_na_planta){
+                                                        if(setor_selecionado < industria_atual->qtd_setores_na_planta){
                                                             do{
                                                                 limpar_tela();
                                                                 opcao_setor_selecionado = menu_opcao_setor_selecionado(setor_selecionado);
                                                                 switch (opcao_setor_selecionado)
                                                                 {
                                                                 case 1:
-                                                                    if(industrias[selecao1].qtd_sensores_na_planta > 0){
-                                                                            cadastrar_sensor_no_setor(&industrias[selecao1], setor_selecionado, selecao1);
-                                                                            esperar_prosseguir();
-                                                                        
-                                                                        
+                                                                    if(industria_atual->qtd_setores_na_plantaa > 0){
+                                                                        pesquisar_setor_por_descricao(industria_atual->tipos_de_sensores, industria_atual->qtd_setores_na_planta);
+                                                                        criar_uma_copia(&industrias[selecao1], selecao1);
+                                                                        esperar_prosseguir();
                                                                     }
                                                                     else{
                                                                         getchar();
@@ -315,7 +318,7 @@ int main(){
                                                 break;
                                                 */
                                             case 4:
-                                                //pesquisar_setor_por_descricao(&industrias[selecao1]);
+                                                pesquisar_setor_por_descricao(industria_atual->setores_da_planta, industria_atual->qtd_setores_na_planta);
                                                 esperar_prosseguir();
                                                 break;
                                             case 5:
@@ -343,7 +346,6 @@ int main(){
                                         case 1:
                                             getchar();
                                             inserir_sensor_na_industria(&(industria_atual->tipos_de_sensores), cadastrar_sensor(industria_atual));
-                                            //industrias[selecao1].tipos_de_sensores[industrias[selecao1].qtd_sensores_na_planta] = cadastrar_sensor(&industrias[selecao1]);
                                             break;
                                         case 2:
                                             if(industria_atual->qtd_sensores_na_planta > 0){
@@ -445,6 +447,13 @@ planta_industria_t *cadastrar_industria(int qtd_industrias){
     return industria_auxiliar;
 }
 
+void inserir_sensor_no_setor(setores_t **sensores_no_setor, sensores_t *tipo_de_sensor ){
+    tipo_de_sensor->prox = *sensores_no_setor
+    *sensores_no_setor = tipo_de_sensor;
+
+
+}
+
 void inserir_industria(planta_industria_t **industrias, planta_industria_t *nova_industria){
     
     nova_industria->prox = *industrias;
@@ -455,6 +464,12 @@ void inserir_sensor_na_industria(sensores_t **tipos_de_sensores, sensores_t *sen
 
     sensor_novo->prox = *tipos_de_sensores;
     *tipos_de_sensores = sensor_novo;
+}
+
+void inserir_setor_na_industria(setores_t **setores_da_planta, setores_t *setor_novo){
+
+    setor_novo->prox = *setores_da_planta;
+    *setores_da_planta = setor_novo;
 }
 
 void listar_industrias(planta_industria_t *industria, int qtd_industrias){
@@ -500,23 +515,20 @@ int menu_setor(int industria_slecionada){
 }
 
 setores_t *criar_setor_de_industria(void){
-    setores_t *setor_zerado = (setores_t *)malloc(sizeof(setores_t));
-    if(setor_zerado == NULL){
-        printf("Erro ao alocar memoria para o setor!\n");
-        exit(1);
-    }
+    setores_t *setor_zerado = NULL;
+    setor_zerado = malloc(sizeof(setores_t));
+
 
     setor_zerado->qtd_sensores_no_setor = 0;
     setor_zerado->descricao[0] = '\0';
+    setor_zerado->sensores_do_setor = NULL;
     return setor_zerado;
 }
 
 setores_t *cadastrar_setor(planta_industria_t *industria){
-    setores_t *setor_auxiliar = malloc(sizeof(setores_t));
-    if(setor_auxiliar == NULL){
-        printf("Erro ao alocar memoria para o setor!\n");
-        exit(1);
-    }
+    setores_t *setor_auxiliar = criar_setor_de_industria();
+    
+
     if(industria->qtd_setores_na_planta < 5){
         setores_t *setor_auxiliar = criar_setor_de_industria();
         setor_auxiliar->id_do_setor = industria->qtd_setores_na_planta;
@@ -533,13 +545,13 @@ setores_t *cadastrar_setor(planta_industria_t *industria){
     }
 }
 
-void listar_setores_por_industria(planta_industria_t *industria){
+void listar_setores_por_industria(setores_t *industria){
     printf("===================\n");
     printf("Lista de Setores: \n");
-    for(int i = 0; i < industria->qtd_setores_na_planta; i++){
-        printf("Setor:\t \033[1;32m[%i]\033[0m\n", i);
-        printf("Descricao:\t \033[1;32m%s\033[0m\n", industria->setores_da_planta[i].descricao);
-        printf("Quantidade de sensores no setor: \033[1;32m%i\033[0m\n", industria->setores_da_planta[i].qtd_sensores_no_setor);
+    for(industria; industria != NULL; industria = industria->prox){
+        printf("Setor:\t \033[1;32m[%i]\033[0m\n", industria->id_do_setor);
+        printf("Descricao:\t \033[1;32m%s\033[0m\n", industria->descricao);
+        printf("Quantidade de sensores no setor: \033[1;32m%i\033[0m\n", industria->qtd_sensores_no_setor);
     }
     printf("===================\n\n");
 }
@@ -558,9 +570,8 @@ int menu_setor_sensor(int industria){
     return opcao;
 }
 
-int menu_escolha_setor(planta_industria_t *industria){
+int menu_escolha_setor(){
     int opcao;
-    
     
     printf("\033[1;34mSetor escolhido:\033[0m ");
     while(scanf("%i", &opcao) != 1){
@@ -694,11 +705,26 @@ void listar_sensores_por_setor(planta_industria_t *industria, int setor){
 
 
 
-void cadastrar_sensor_no_setor(planta_industria_t *industria, int setor, int selecao){
+void criar_uma_copia( sensores_t *tipo_de_sensor){
+    sensores_t *sensor_copia= NULL;
+    sensor_copia = malloc(sizeof(sensores_t));
+    *(sensor_copia->id_do_sensor) = *(tipo_de_sensor->id_do_sensor);
+    strcpy(*(sensor_copia->tipo), *(tipo_de_sensor->tipo));
+    *(sensor_copia->faixa_leitura_1) = *(tipo_de_sensor->faixa_leitura_1);
+    *(sensor_copia->faixa_leitura_2) = *(tipo_de_sensor->faixa_leitura_2);
+    *(sensor_copia->numero_da_leitura) = *(tipo_de_sensor->numero_da_leitura);
+    *(sensor_copia->primeira_leitura) = *(tipo_de_sensor->primeira_leitura);
+    strcpy(*(sensor_copia->horario_1) , *(tipo_de_sensor->horario_1));
+    *(sensor_copia->segunda_leitura) = *(tipo_de_sensor->segunda_leitura);
+    strcpy(*(sensor_copia->horario_2) , *(tipo_de_sensor->horario_2));
+    *(sensor_copia->variacao_leitura) = *(tipo_de_sensor->variacao_leitura);
+    *(sensor_copia->media) = *(tipo_de_sensor->media);
+    
+
     int sensor_escolhido;
-        if(industria->setores_da_planta[setor].qtd_sensores_no_setor < 3){
+        if(sensores_do_setor->qtd_sensores_no_setor < 3){
             printf("Sensores diposniveis:\n");
-            listar_sensores_por_industria(industria->tipos_de_sensores);
+            listar_sensores_por_industria(sensores_do_setor->tipos_de_sensores);
             printf("\033[1;34mOpcao escolhida:\033[0m ");
             while(scanf("%i", &sensor_escolhido) != 1){
                 printf("Entrada invalida! Digite novamente: ");
@@ -986,19 +1012,19 @@ void relatorio_da_media_dos_setores(planta_industria_t *industria){
 
 //Pesquisas
 
-void pesquisar_setor_por_descricao(planta_industria_t *industria){
+void pesquisar_setor_por_descricao(setores_t *setores_da_planta, int qtd_setores_na_planta){
     getchar();
     int setor_nao_encontrado = 1;
     string descricao;
-    if(industria->qtd_setores_na_planta > 0){
+    if(qtd_setores_na_planta > 0){
         printf("Qual a descricao do setor que deseja procurar: ");
         fgets(descricao, T_MAX_STR, stdin);
         retirar_enter(descricao);
-        for(int i = 0; i < industria->qtd_setores_na_planta; i++){
-            if(!(strcmp(descricao, industria->setores_da_planta[i].descricao))){
-                    printf("Setor\t \033[1;32m[%i]\033[0m\n", industria->setores_da_planta[i].id_do_setor);
-                    printf("Descricao:\t \033[1;32m%s\033[0m\n", industria->setores_da_planta[i].descricao);
-                    printf("Quantidade de sensores do setor: \033[1;32m[%i]\033[0m\n", industria->setores_da_planta[i].qtd_sensores_no_setor);
+        for(setores_da_planta ; setores_da_planta !=NULL; setores_da_planta = setores_da_planta->prox){
+            if(!(strcmp(descricao, setores_da_planta->descricao))){
+                    printf("Setor\t \033[1;32m[%i]\033[0m\n", setores_da_planta->id_do_setor);
+                    printf("Descricao:\t \033[1;32m%s\033[0m\n", setores_da_planta->descricao);
+                    printf("Quantidade de sensores do setor: \033[1;32m[%i]\033[0m\n", setores_da_planta->qtd_sensores_no_setor);
                     printf("=================================\n\n"); 
                     setor_nao_encontrado = 0; // nega a expressao se ele for encontrado
             }
@@ -1011,6 +1037,17 @@ void pesquisar_setor_por_descricao(planta_industria_t *industria){
         printf("\033[1;31mAinda nao ha setores.\n\033[0m");
     }
     
+}
+
+setores_t *pesquisar_setor_por_id(setores_t *setores_da_planta , int id_do_setor){
+    for(setores_da_planta; setores_da_planta != NULL; setores_da_planta = setores_da_planta->prox){
+        if(setores_da_planta->id_do_setor == id_do_setor){
+            return setores_da_planta;
+        }
+    }
+    return NULL;
+
+
 }
 
 
