@@ -77,7 +77,7 @@ int menu_opcao_setor_selecionado(int opcao_setor_selecionado);
 setores_t *cadastrar_setor(planta_industria_t *industria);
 sensores_t criar_uma_copia(sensores_t *tipo_de_sensor);
 void listar_setores_por_industria(setores_t *industria);
-int menu_escolha_setor(planta_industria_t *industria);
+int menu_escolha_setor();
 void listar_sensores_por_setor(planta_industria_t *industria, int setor);
 void relatorio_de_leitura_por_setor(planta_industria_t *industria);
 void relatorio_de_variacao_por_setor(planta_industria_t *industria, int setor);
@@ -316,7 +316,7 @@ int main(){
                                                     }
                                                 }
                                                 break;
-                                                */
+                                                
                                             case 4:
                                                 pesquisar_setor_por_descricao(industria_atual->setores_da_planta, industria_atual->qtd_setores_na_planta);
                                                 esperar_prosseguir();
@@ -448,14 +448,11 @@ planta_industria_t *cadastrar_industria(int qtd_industrias){
 }
 
 void inserir_sensor_no_setor(setores_t **sensores_no_setor, sensores_t *tipo_de_sensor ){
-    tipo_de_sensor->prox = *sensores_no_setor
+    tipo_de_sensor->prox = *sensores_no_setor;
     *sensores_no_setor = tipo_de_sensor;
-
-
 }
 
 void inserir_industria(planta_industria_t **industrias, planta_industria_t *nova_industria){
-    
     nova_industria->prox = *industrias;
     *industrias = nova_industria;
 }
@@ -526,9 +523,6 @@ setores_t *criar_setor_de_industria(void){
 }
 
 setores_t *cadastrar_setor(planta_industria_t *industria){
-    setores_t *setor_auxiliar = criar_setor_de_industria();
-    
-
     if(industria->qtd_setores_na_planta < 5){
         setores_t *setor_auxiliar = criar_setor_de_industria();
         setor_auxiliar->id_do_setor = industria->qtd_setores_na_planta;
@@ -542,6 +536,7 @@ setores_t *cadastrar_setor(planta_industria_t *industria){
     else{
         printf("\033[31mQuantidade maxima de setores atingida!!\033[0m");
         usleep(1000000);
+        return NULL;
     }
 }
 
@@ -705,20 +700,20 @@ void listar_sensores_por_setor(planta_industria_t *industria, int setor){
 
 
 
-void criar_uma_copia( sensores_t *tipo_de_sensor){
+void criar_uma_copia(sensores_t *tipo_de_sensor){
     sensores_t *sensor_copia= NULL;
     sensor_copia = malloc(sizeof(sensores_t));
-    *(sensor_copia->id_do_sensor) = *(tipo_de_sensor->id_do_sensor);
-    strcpy(*(sensor_copia->tipo), *(tipo_de_sensor->tipo));
-    *(sensor_copia->faixa_leitura_1) = *(tipo_de_sensor->faixa_leitura_1);
-    *(sensor_copia->faixa_leitura_2) = *(tipo_de_sensor->faixa_leitura_2);
-    *(sensor_copia->numero_da_leitura) = *(tipo_de_sensor->numero_da_leitura);
-    *(sensor_copia->primeira_leitura) = *(tipo_de_sensor->primeira_leitura);
-    strcpy(*(sensor_copia->horario_1) , *(tipo_de_sensor->horario_1));
-    *(sensor_copia->segunda_leitura) = *(tipo_de_sensor->segunda_leitura);
-    strcpy(*(sensor_copia->horario_2) , *(tipo_de_sensor->horario_2));
-    *(sensor_copia->variacao_leitura) = *(tipo_de_sensor->variacao_leitura);
-    *(sensor_copia->media) = *(tipo_de_sensor->media);
+    sensor_copia->id_do_sensor = tipo_de_sensor->id_do_sensor;
+    strcpy((sensor_copia->tipo), (tipo_de_sensor->tipo));
+    (sensor_copia->faixa_leitura_1) = (tipo_de_sensor->faixa_leitura_1);
+    (sensor_copia->faixa_leitura_2) = (tipo_de_sensor->faixa_leitura_2);
+    (sensor_copia->numero_da_leitura) = (tipo_de_sensor->numero_da_leitura);
+    (sensor_copia->primeira_leitura) = (tipo_de_sensor->primeira_leitura);
+    strcpy((sensor_copia->horario_1) , (tipo_de_sensor->horario_1));
+    (sensor_copia->segunda_leitura) = (tipo_de_sensor->segunda_leitura);
+    strcpy((sensor_copia->horario_2) , (tipo_de_sensor->horario_2));
+    (sensor_copia->variacao_leitura) = (tipo_de_sensor->variacao_leitura);
+    (sensor_copia->media) = (tipo_de_sensor->media);
     
 
     int sensor_escolhido;
