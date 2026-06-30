@@ -80,7 +80,7 @@ sensores_t *criar_uma_copia(sensores_t *tipo_de_sensor, int qtd_sensores_no_seto
 void listar_setores_por_industria(setores_t *industria);
 int menu_escolha_setor(void);
 void listar_sensores_por_setor(sensores_t *sensores_no_setor);
-void relatorio_de_leitura_por_setor(planta_industria_t *industria);
+void relatorio_de_leitura_por_setor(planta_industria_t *industria, setores_t *setor, sensores_t *sensor);
 void relatorio_de_variacao_por_setor(planta_industria_t *industria, int setor);
 void relatorio_de_leitura_pelo_setor(planta_industria_t *industria, int setor);
 void pesquisar_setor_por_descricao(setores_t *setor, int qtd_setores_no_sensor);
@@ -97,10 +97,10 @@ int menu_sensores(int industria_slecionada);
 int menu_sensor_selecionado(void);
 void leitura_do_sensor(sensores_t *sensor);
 void horario_da_leitura(sensores_t *sensor, int leitura);
-void relatorio_de_variacao_por_sensor(planta_industria_t *industria, int setor, int sensor);
+void relatorio_de_variacao_por_sensor(sensores_t *industria);
 void relatorio_de_leitura_por_tipo(planta_industria_t *industria, int setor);
 void relatorio_da_media_dos_setores(planta_industria_t *industria);
-void relatorio_de_leitura_por_sensor(planta_industria_t *industria, int setor, int sensor);
+void relatorio_de_leitura_por_sensor(sensores_t *industria);
 void pesquisar_sensor_por_tipo(sensores_t *tipo_sensores, int qtd_sensores_na_planta);
 sensores_t *pesquisar_sensor_por_id(sensores_t *tipo_sensores, int id_do_sensor);
 sensores_t *cadastrar_sensor(planta_industria_t *industria);
@@ -117,6 +117,7 @@ void limpar_tela(void);
 
 
 int main(){
+    sensores_t *sensor_atual = NULL;
     setores_t *setor_atual = NULL;
     planta_industria_t *industria_atual = NULL;
     int qtd_industrias = 0;
@@ -240,24 +241,24 @@ int main(){
                                                                         }
                                                                     }
                                                                     break;
-                                                                    // menu dentro de setor escolhido - seleciona um sensor para efetuar as leituras/entra no menu de monitorame
+                                                                    // menu dentro de setor escolhido - seleciona um sensor para efetuar as leituras/entra no menu de monitoramento 
                                                                 case 2:
-                                                                    /*if(industrias[selecao1].setores_da_planta[setor_selecionado].qtd_sensores_no_setor > 0){
-                                                                        listar_sensores_por_setor(&industrias[selecao1], setor_selecionado);
+                                                                    if(industria_atual->qtd_setores_na_planta > 0){
+                                                                        listar_sensores_por_setor(setor_atual->sensores_do_setor);
                                                                         printf("\033[1;34mOpcao escolhida:\033[0m ");
                                                                         while(scanf("%i", &sensor_selecionado) != 1){
                                                                             printf("Entrada invalida! Digite novamente: ");
                                                                             while(getchar() != '\n'); // limpa
                                                                         }
-                                                                        if(sensor_selecionado < industrias[selecao1].setores_da_planta[setor_selecionado].qtd_sensores_no_setor){
+                                                                        if(sensor_selecionado < industria_atual->qtd_setores_na_planta){
                                                                             do{
                                                                                 limpar_tela();
                                                                                 opcao_sensor = menu_sensor_selecionado();
                                                                                 switch (opcao_sensor)
                                                                                 {
                                                                                 case 1:
-                                                                                    if(industrias[selecao1].setores_da_planta[setor_selecionado].sensores_do_setor[sensor_selecionado].numero_da_leitura < 3){
-                                                                                        leitura_do_sensor(&industrias[selecao1].setores_da_planta[setor_selecionado].sensores_do_setor[sensor_selecionado]);
+                                                                                    if(sensor_atual->numero_da_leitura < 3){
+                                                                                        leitura_do_sensor(sensor_atual);
                                                                                     }
                                                                                     else{
                                                                                         printf("Leituras ja efetuadas!");
@@ -265,11 +266,11 @@ int main(){
                                                                                     }
                                                                                     break;
                                                                                 case 2:
-                                                                                    relatorio_de_leitura_por_sensor(&industrias[selecao1], setor_selecionado, sensor_selecionado);
+                                                                                    relatorio_de_leitura_por_sensor(sensor_atual);
                                                                                     esperar_prosseguir();
                                                                                     break;
                                                                                 case 3:
-                                                                                    relatorio_de_variacao_por_sensor(&industrias[selecao1], setor_selecionado, sensor_selecionado);
+                                                                                    relatorio_de_variacao_por_sensor(sensor_atual);
                                                                                     esperar_prosseguir();
                                                                                     break;
                                                                                 case 0: break;
@@ -287,8 +288,6 @@ int main(){
                                                                         printf("\033[31mSem sensores cadastrados!!\033[0m\n");
                                                                         esperar_prosseguir();
                                                                     }
-                                                                    
-                                                                    */
                                                                    break;
                                                                 case 3:
                                                                     listar_sensores_por_setor(setor_atual->sensores_do_setor);
@@ -338,7 +337,7 @@ int main(){
                                                 break;
                                                 // Menu dentro de setor dentro da industria - relatorio dos setores
                                             case 5:
-                                                //relatorio_de_leitura_por_setor(&industrias[selecao1]);
+                                                relatorio_de_leitura_por_setor(industria_atual, setor_atual, sensor_atual);
                                                 esperar_prosseguir();
                                                 break;
                                                 // Menu dentro de setor dentro da industria - relatorio das medias dos setores
@@ -827,15 +826,15 @@ void leitura_do_sensor(sensores_t *sensor){
 
 // relatorios
 
-void relatorio_de_leitura_por_sensor(planta_industria_t *industria, int setor, int sensor){
-    if(industria->setores_da_planta[setor].sensores_do_setor[sensor].numero_da_leitura > 1){
+void relatorio_de_leitura_por_sensor(sensores_t *sensor_escolhido){
+    if(sensor_escolhido->numero_da_leitura > 1){
                     printf("Primeira Leitura: \n");
-                    printf("[%s]\n", industria->setores_da_planta[setor].sensores_do_setor[sensor].horario_1);
-                    printf("-> %2.f\n", industria->setores_da_planta[setor].sensores_do_setor[sensor].primeira_leitura);
-                    if(industria->setores_da_planta[setor].sensores_do_setor[sensor].numero_da_leitura > 2){
+                    printf("[%s]\n", sensor_escolhido->horario_1);
+                    printf("-> %2.f\n", sensor_escolhido->primeira_leitura);
+                    if(sensor_escolhido->numero_da_leitura > 2){
                         printf("Segunda Leitura: \n");
-                        printf("[%s]\n", industria->setores_da_planta[setor].sensores_do_setor[sensor].horario_2);
-                        printf("-> %2.f\n", industria->setores_da_planta[setor].sensores_do_setor[sensor].segunda_leitura);
+                        printf("[%s]\n", sensor_escolhido->horario_2);
+                        printf("-> %2.f\n", sensor_escolhido->segunda_leitura);
                     }
                     else{
                         printf("\033[31mAguardando segunda leitura.\033[0m\n");
@@ -847,25 +846,25 @@ void relatorio_de_leitura_por_sensor(planta_industria_t *industria, int setor, i
                 printf("=================================\n\n"); 
 }
 
-void relatorio_de_leitura_por_setor(planta_industria_t *industria){
+void relatorio_de_leitura_por_setor(planta_industria_t *industria, setores_t *setor, sensores_t *sensor){
     if(industria->qtd_setores_na_planta > 0){
-        for(int j = 0; j < industria->qtd_setores_na_planta; j++){
+        for(industria; industria!= NULL;industria = industria->prox){
             printf("=================================\n");
-            printf("Relatorio de Sensores do Setor \033[1;32m[%i]\033[0m: \n", j);
-            if(industria->setores_da_planta[j].qtd_sensores_no_setor > 0){
-                for(int i = 0; i < industria->setores_da_planta[j].qtd_sensores_no_setor; i++){
-                    printf("Sensor numero \033[1;32m[%i]\033[0m\n", i);
-                    printf("Sensor\t \033[1;32m[%i]\033[0m\n", industria->setores_da_planta[j].sensores_do_setor[i].id_do_sensor);
-                    printf("Tipo:\t \033[1;32m%s\033[0m\n", industria->setores_da_planta[j].sensores_do_setor[i].tipo);
-                    printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", industria->setores_da_planta[j].sensores_do_setor[i].faixa_leitura_1, industria->setores_da_planta[j].sensores_do_setor[i].faixa_leitura_2);
-                    if(industria->setores_da_planta[j].sensores_do_setor[i].numero_da_leitura > 1){
+            printf("Relatorio de Sensores do Setor \033[1;32m[%i]\033[0m: \n", setor->id_do_setor);
+            if(setor->qtd_sensores_no_setor > 0){
+                for(setor ; setor!=NULL; setor= setor->prox){
+                    printf("Sensor numero \033[1;32m[%i]\033[0m\n", sensor->id_do_sensor_no_setor);
+                    printf("Sensor\t \033[1;32m[%i]\033[0m\n", sensor->id_do_sensor);
+                    printf("Tipo:\t \033[1;32m%s\033[0m\n", sensor->tipo);
+                    printf("Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", sensor->faixa_leitura_1, sensor->faixa_leitura_2);
+                    if(sensor->numero_da_leitura > 1){
                         printf("Primeira Leitura: \n");
-                        printf("[%s]\n", industria->setores_da_planta[j].sensores_do_setor[i].horario_1);
-                        printf("-> %2.f\n", industria->setores_da_planta[j].sensores_do_setor[i].primeira_leitura);
-                        if(industria->setores_da_planta[j].sensores_do_setor[i].numero_da_leitura > 2){
+                        printf("[%s]\n", sensor->horario_1);
+                        printf("-> %2.f\n", sensor->primeira_leitura);
+                        if(sensor->numero_da_leitura > 2){
                             printf("Segunda Leitura: \n");
-                            printf("[%s]\n", industria->setores_da_planta[j].sensores_do_setor[i].horario_2);
-                            printf("-> %2.f\n", industria->setores_da_planta[j].sensores_do_setor[i].segunda_leitura);
+                            printf("[%s]\n", sensor->horario_2);
+                            printf("-> %2.f\n", sensor->segunda_leitura);
                         }
                         else{
                             printf("\033[31mAguardando segunda leitura.\033[0m\n");
@@ -988,11 +987,11 @@ void relatorio_de_variacao_por_setor(planta_industria_t *industria, int setor){
         }   
 }
 
-void relatorio_de_variacao_por_sensor(planta_industria_t *industria, int setor, int sensor){
+void relatorio_de_variacao_por_sensor(sensores_t *industria){
     printf("=================================\n");
-                if(industria->setores_da_planta[setor].sensores_do_setor[sensor].numero_da_leitura > 2){
-                    printf("Sensor \033[1;32m[%i]\033[0m\n", sensor);
-                    printf("Variacao: %.2f\n", industria->setores_da_planta[setor].sensores_do_setor[sensor].variacao_leitura);     
+                if(industria->numero_da_leitura > 2){
+                    printf("Sensor \033[1;32m[%i]\033[0m\n", industria->id_do_sensor_no_setor);
+                    printf("Variacao: %.2f\n", industria->variacao_leitura);     
                 }
                 else{
                     printf("\033[1;31mSem leitura suficientes para o calculo da variacao\033[0m\n");
@@ -1000,16 +999,16 @@ void relatorio_de_variacao_por_sensor(planta_industria_t *industria, int setor, 
             printf("=================================\n\n"); 
 }
 
-void relatorio_da_media_dos_setores(planta_industria_t *industria){
+void relatorio_da_media_dos_setores(planta_industria_t *industria, sensores_t *sensor, setores_t *setor){
     if(industria->qtd_setores_na_planta > 0){
         printf("=================================\n");
-        for(int i = 0; i < industria->qtd_setores_na_planta; i++ ){
-            printf("Relatorio de media dos Sensores do Setor \033[1;32m[%i]\033[0m: \n", i);
-            if(industria->setores_da_planta[i].qtd_sensores_no_setor > 0){
-                for(int j = 0; j < industria->setores_da_planta[i].qtd_sensores_no_setor; j++){
-                        printf("Sensor \033[1;32m[%i]\033[0m\n", j);
-                        if(industria->setores_da_planta[i].sensores_do_setor[j].numero_da_leitura > 2){
-                            printf("Media: %.2f\n", industria->setores_da_planta[i].sensores_do_setor[j].media);
+        for(industria;industria!=NULL;industria = industria->prox ){
+            printf("Relatorio de media dos Sensores do Setor \033[1;32m[%i]\033[0m: \n", sensor->id_do_sensor_no_setor);
+            if(setor->qtd_sensores_no_setor > 0){
+                for(setor; setor!=NULL; setor = seto->prox){
+                        printf("Sensor \033[1;32m[%i]\033[0m\n", sensor->id_do_sensor_no_setor);
+                        if(sensor->numero_da_leitura > 2){
+                            printf("Media: %.2f\n", sensor->media);
                         }
                         else{
                             printf("\033[1;31mSem leituras suficentes para executar a media\033[0m \n");
