@@ -244,7 +244,7 @@ int main(){
                                                                     break;
                                                                     // menu dentro de setor escolhido - seleciona um sensor para efetuar as leituras/entra no menu de monitoramento 
                                                                 case 2:
-                                                                    if(industria_atual->qtd_setores_na_planta > 0){
+                                                                    if(setor_atual->qtd_sensores_no_setor > 0){
                                                                         //sensor_atual = pesquisar_sensor_por_id_no_setor(setor_atual->sensores_do_setor, sensor_selecionado);
                                                                         listar_sensores_por_setor(setor_atual->sensores_do_setor);
                                                                         printf("\033[1;34mOpcao escolhida:\033[0m ");
