@@ -20,6 +20,8 @@ typedef char string[T_MAX_STR];
 
 // definindo um tipo para sensor
 typedef struct tipo_sensores{
+    int id_da_planta_mae;
+    int id_do_setor_mae;
     int id_do_sensor_no_setor;
     int id_do_sensor;
     string tipo;
@@ -37,6 +39,7 @@ typedef struct tipo_sensores{
 
 // definindo um tipo  setor
 typedef struct setores{
+    int id_da_planta_mae;
     int id_do_setor;
     string descricao;
     sensores_t *sensores_do_setor;
@@ -113,6 +116,13 @@ void retirar_enter(string str);
 void esperar_prosseguir(void);
 void limpar_tela(void);
 
+// exportacoes e leituras
+void exportar_industrias_bin(planta_industria_t *industrias, char *nome_arq);
+void ler_industrias_bin(planta_industria_t **industrias, char *nome_arq, int *qtd_industrias);
+void exportar_setores_bin(planta_industria_t *industrias, char *nome_arq);
+void exportar_tipos_sensores_bin(sensores_t *tipo_sensores, char *nome_arq);
+void exportar_sensores_bin(sensores_t *sensores_no_setor, char *nome_arq);
+void exportar_html();
 
 
 int main(){
@@ -423,7 +433,14 @@ int main(){
                 break;
                         
             case 0: break;
-            
+            case 4:
+                exportar_industrias_bin(industrias, "insdustrias.bin");
+                exportar_setores_bin(industrias, "setores.bin");
+                break;
+            case 5:
+                ler_industrias_bin(&industrias, "insdustrias.bin", &qtd_industrias);
+                ler_setores_bin(industrias, "setores.bin");
+                break;
             default:
                 printf("\033[1;31mOpcao invalida!!!\033[0m");
                 usleep(1000000);
@@ -550,7 +567,9 @@ setores_t *criar_setor_de_industria(void){
 
 setores_t *cadastrar_setor(planta_industria_t *industria){
     if(industria->qtd_setores_na_planta < 5){
+
         setores_t *setor_auxiliar = criar_setor_de_industria();
+        setor_auxiliar->id_da_planta_mae = industria->id_da_planta;
         setor_auxiliar->id_do_setor = industria->qtd_setores_na_planta;
         industria->qtd_setores_na_planta = industria->qtd_setores_na_planta + 1; //atualizando a quantidade de setores na industria selecionada
         printf("| Cadastro do setor %i |\n", setor_auxiliar->id_do_setor);
@@ -1203,6 +1222,103 @@ void limpar_tela(void){
 }
 
 
+// exportacoes
 
+void exportar_industrias_bin(planta_industria_t *industrias, char *nome_arq){
+    FILE *fp= NULL;
+    fp = fopen(nome_arq, "wb");
 
+    while (industrias)
+    {
+        fwrite(industrias, sizeof(planta_industria_t), 1, fp);
+        industrias = industrias->prox;
+    }
+    fclose(fp);
+    
+}
+void exportar_setores_bin(planta_industria_t *industrias, char *nome_arq){
+    FILE *fp= NULL;
+    fp = fopen(nome_arq, "wb");
+    for(industrias; industrias != NULL; industrias = industrias->prox){
+        setores_t *setor_aux = industrias->setores_da_planta;
+    while (setor_aux)
+    {
+        fwrite(setor_aux, sizeof(setores_t), 1, fp);
+        setor_aux = setor_aux->prox;
+    }
+    }
+    fclose(fp);
+    
+}
+void exportar_tipos_sensores_bin(sensores_t *tipo_sensores, char *nome_arq){
+    FILE *fp= NULL;
+    fp = fopen(nome_arq, "wb");
 
+    while (tipo_sensores)
+    {
+        fwrite(tipo_sensores, sizeof(planta_industria_t), 1, fp);
+        tipo_sensores = tipo_sensores->prox;
+    }
+    fclose(fp);
+    
+}
+void exportar_sensores_bin(sensores_t *sensores_no_setor, char *nome_arq){
+    FILE *fp= NULL;
+    fp = fopen(nome_arq, "wb");
+
+    while (sensores_no_setor)
+    {
+        fwrite(sensores_no_setor, sizeof(planta_industria_t), 1, fp);
+        sensores_no_setor = sensores_no_setor->prox;
+    }
+    fclose(fp);
+    
+}
+
+void ler_industrias_bin(planta_industria_t **industrias, char *nome_arq, int *qtd_industrias){
+    FILE *fp= NULL;
+    planta_industria_t *nova_industria =NULL;
+    fp = fopen(nome_arq, "rb");
+    while (!feof(fp)) {
+       nova_industria = malloc(sizeof(planta_industria_t));
+       fread(nova_industria, sizeof(planta_industria_t), 1, fp);
+       nova_industria->prox = NULL;
+       nova_industria->setores_da_planta = NULL;
+       nova_industria->tipos_de_sensores = NULL;
+        if (!feof(fp)) {
+                inserir_industria(industrias, nova_industria);
+                *qtd_industrias = *qtd_industrias+1;
+            }
+            else {
+                free(nova_industria);
+            }
+    
+    }
+    fclose(fp);
+}
+
+void ler_setores_bin(planta_industria_t *industrias, char *nome_arq){
+    FILE *fp= NULL;
+    setores_t *novo_setor = NULL;
+    planta_industria_t *ind_aux = industrias;
+    for(ind_aux; ind_aux != NULL; ind_aux = ind_aux->prox){  
+    setores_t *nova_lista_de_setores = NULL;
+        fp = fopen(nome_arq, "rb");
+        while (!feof(fp)) {
+            novo_setor = malloc(sizeof(setores_t));
+            fread(novo_setor, sizeof(setores_t), 1, fp);
+            if(novo_setor->id_da_planta_mae == ind_aux->id_da_planta){
+                novo_setor->prox = NULL;
+                novo_setor->sensores_do_setor = NULL;
+                    if (!feof(fp)) {
+                            inserir_setor_na_industria(&nova_lista_de_setores, novo_setor);
+                        }
+                        else {
+                            free(novo_setor);
+                        }
+        }
+        ind_aux->setores_da_planta = nova_lista_de_setores;
+        }fclose(fp);
+    }
+    
+}
