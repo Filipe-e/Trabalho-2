@@ -18,7 +18,6 @@
 // definindo string
 typedef char string[T_MAX_STR];
 
-
 // definindo um tipo para sensor
 typedef struct tipo_sensores{
     int id_do_sensor_no_setor;
@@ -35,9 +34,6 @@ typedef struct tipo_sensores{
     float media;
     struct tipo_sensores *prox;
 }sensores_t;
-
-
-
 
 // definindo um tipo  setor
 typedef struct setores{
@@ -84,6 +80,7 @@ void relatorio_de_leitura_por_setor(setores_t *setor, int qtd_setores_na_planta)
 void relatorio_de_variacao_por_setor(setores_t *setor);
 void relatorio_de_leitura_pelo_setor(setores_t *setor);
 void pesquisar_setor_por_descricao(setores_t *setor, int qtd_setores_no_sensor);
+setores_t *pesquisar_setor_por_id_recursiva(setores_t *setores_da_planta , int id_do_setor);
 setores_t *pesquisar_setor_por_id(setores_t *setores_da_planta , int id_do_setor);
 // cria um setor vazio
 setores_t *criar_setor_de_industria(void);
@@ -109,6 +106,7 @@ sensores_t *pesquisar_sensor_por_id_no_setor(sensores_t *sensor, int id_sensor_n
 
 //setores
 void inserir_sensor_no_setor(sensores_t **sensores_no_setor, sensores_t *tipo_de_sensor);
+void remover_sensor(sensores_t **sensor, setores_t *setor_atual);
 
 // funções auxiliares
 void retirar_enter(string str);
@@ -212,7 +210,7 @@ int main(){
                                                         printf("Setores diposniveis:\n");
                                                         listar_setores_por_industria(industria_atual->setores_da_planta);    
                                                         setor_selecionado = menu_escolha_setor();
-                                                        setor_atual = pesquisar_setor_por_id(industria_atual->setores_da_planta, setor_selecionado);
+                                                        setor_atual = pesquisar_setor_por_id_recursiva(industria_atual->setores_da_planta, setor_selecionado);
                                                         if(setor_selecionado < industria_atual->qtd_setores_na_planta){
                                                             do{
                                                                 limpar_tela();
@@ -306,6 +304,13 @@ int main(){
                                                                     break;
                                                                 case 6:
                                                                     relatorio_de_variacao_por_setor(setor_atual);
+                                                                    esperar_prosseguir();
+                                                                    break;
+                                                                case 7:
+                                                                    listar_sensores_por_setor(setor_atual->sensores_do_setor);
+                                                                    remover_sensor(&(setor_atual->sensores_do_setor), setor_atual);
+                                                                    printf("\033[1;32mLista atualizada com sucesso\033[0m\n");
+                                                                    listar_sensores_por_setor(setor_atual->sensores_do_setor);
                                                                     esperar_prosseguir();
                                                                     break;
                                                                 case 0: break;
@@ -606,6 +611,7 @@ int menu_opcao_setor_selecionado(int opcao_setor_selecionado){
     printf("\033[1;32m[ 4 ]\033[0m - [GERAL] Relatorio dos sensores cadastrados\n");
     printf("\033[1;32m[ 5 ]\033[0m - [POR TIPO] Relatorio dos sensores cadastrados\n");
     printf("\033[1;32m[ 6 ]\033[0m - [GERAL] Relatorio de variacao dos sensores cadastrados\n");
+    printf("\033[1;31m[ 7 ] - REMOVER UM SENSOR]\033[0m\n");
     printf("\033[1;32m[ 0 ]\033[0m - Voltar\n");
     printf("\033[1;34mOpcao escolhida:\033[0m ");
     while(scanf("%i", &opcao) != 1){
@@ -1089,6 +1095,15 @@ setores_t *pesquisar_setor_por_id(setores_t *setores_da_planta , int id_do_setor
     return NULL;
 }
 
+setores_t *pesquisar_setor_por_id_recursiva(setores_t *setores_da_planta , int id_do_setor){
+    if(setores_da_planta == NULL){
+        return NULL;
+    }
+    if(setores_da_planta->id_do_setor == id_do_setor){
+        return setores_da_planta;
+    }
+        return pesquisar_setor_por_id_recursiva(setores_da_planta->prox, id_do_setor);
+}
 
 void pesquisar_sensor_por_tipo(sensores_t *tipo_sensores, int qtd_sensores_na_planta){
     getchar();
@@ -1127,7 +1142,44 @@ sensores_t *pesquisar_sensor_por_id(sensores_t *tipo_sensores, int id_do_sensor)
     }
 }
 
-
+void remover_sensor(sensores_t **sensor, setores_t *setor_atual){
+    int i;
+    sensores_t *lista_de_sensores_aux_2 = *sensor;
+    sensores_t *lista_de_sensores_aux = *sensor;
+    sensores_t *anterior = NULL;
+    int id_do_sensor_no_setor;
+    printf("\033[1;31mQUAL NUMERO DO SENSOR DENTRO DESSE SETOR?\033[0m\n");
+    while(scanf("%i", &id_do_sensor_no_setor) != 1){
+    printf("Entrada invalida! Digite novamente: ");
+    while(getchar() != '\n'); // limpa
+    }
+    if(id_do_sensor_no_setor < setor_atual->qtd_sensores_no_setor){
+        while(lista_de_sensores_aux->prox){
+            if(lista_de_sensores_aux->id_do_sensor_no_setor == id_do_sensor_no_setor){
+                break;
+            }
+            anterior = lista_de_sensores_aux;
+            lista_de_sensores_aux = lista_de_sensores_aux->prox;    
+        }
+        if(!anterior){
+            *sensor = lista_de_sensores_aux->prox;        
+            free(lista_de_sensores_aux);
+        }
+        else{
+            if(!lista_de_sensores_aux){
+                anterior->prox == NULL;
+            }
+            anterior->prox = lista_de_sensores_aux->prox;
+            free(lista_de_sensores_aux);
+        }
+        setor_atual->qtd_sensores_no_setor = setor_atual->qtd_sensores_no_setor - 1;
+        for(i = setor_atual->qtd_sensores_no_setor-1,lista_de_sensores_aux_2;i != 0, lista_de_sensores_aux_2!=NULL;i--, lista_de_sensores_aux_2 = lista_de_sensores_aux_2->prox){
+            lista_de_sensores_aux_2->id_do_sensor_no_setor = i;
+        }
+    }
+    else(printf("\033[1;31m[sensor nn existe]\033[0m\n"));
+}
+ 
 
 //funções auxíliares
 
@@ -1149,3 +1201,8 @@ void limpar_tela(void){
         system("clear");
     #endif
 }
+
+
+
+
+
