@@ -324,6 +324,14 @@
                                                                                         exportar_relatorio_de_leitura_por_sensor(sensor_atual);
                                                                                         esperar_prosseguir();
                                                                                         break;
+                                                                                    case 6:
+                                                                                        exportar_relatorio_de_variacao_por_sensor_em_csv(sensor_atual);
+                                                                                        esperar_prosseguir();
+                                                                                        break;
+                                                                                    case 7: 
+                                                                                        exportar_relatorio_de_leitura_por_sensor_em_csv(sensor_atual);
+                                                                                        esperar_prosseguir();
+                                                                                        break;
                                                                                     case 0: break;
                                                                                     default:
                                                                                         break;
@@ -359,6 +367,7 @@
                                                                     case 7:
                                                                         exportar_relatorio_de_variacao_por_setor(setor_atual);
                                                                         esperar_prosseguir();
+                                                                        break;
                                                                     case 8:
                                                                         exportar_relatorio_de_leitura_pelo_setor(setor_atual);
                                                                         esperar_prosseguir();
@@ -368,6 +377,18 @@
                                                                         esperar_prosseguir();
                                                                         break;
                                                                     case 10:
+                                                                        exportar_relatorio_de_variacao_por_setor_em_csv(setor_atual);
+                                                                        esperar_prosseguir();
+                                                                        break;
+                                                                    case 11:
+                                                                        exportar_relatorio_de_leitura_pelo_setor_em_csv(setor_atual);
+                                                                        esperar_prosseguir();
+                                                                        break;
+                                                                    case 12:
+                                                                        exportar_relatorio_de_leitura_por_tipo_em_csv(setor_atual);
+                                                                        esperar_prosseguir();
+                                                                        break;
+                                                                    case 13:
                                                                         listar_sensores_por_setor(setor_atual->sensores_do_setor);
                                                                         remover_sensor(&(setor_atual->sensores_do_setor), setor_atual);
                                                                         printf("\033[1;32mLista atualizada com sucesso\033[0m\n");
@@ -420,6 +441,14 @@
                                                     break;
                                                 case 8:
                                                     exportar_relatorio_da_media_dos_setores(industria_atual->setores_da_planta, industria_atual->qtd_setores_na_planta);
+                                                    esperar_prosseguir();
+                                                    break;
+                                                case 9:
+                                                    exportar_relatorio_de_leitura_por_setor_em_csv(industria_atual->setores_da_planta,   industria_atual->qtd_setores_na_planta);
+                                                    esperar_prosseguir();
+                                                    break;
+                                                case 10:
+                                                    exportar_relatorio_da_media_dos_setores_em_csv(industria_atual->setores_da_planta,   industria_atual->qtd_setores_na_planta);
                                                     esperar_prosseguir();
                                                     break;
                                                 case 0: break;
@@ -605,6 +634,8 @@
         printf("\033[1;32m[ 6 ]\033[0m - Relatorio de media dos setores\n");
         printf("\033[1;32m[ 7 ]\033[0m - Exportar relatorio dos setores em txt\n");
         printf("\033[1;32m[ 8 ]\033[0m - Exportar elatorio de media dos setores em txt\n");
+        printf("\033[1;32m[ 9 ]\033[0m - Exportar relatorio dos setores em csv\n");
+        printf("\033[1;32m[ 10 ]\033[0m-Exportar relatorio de media dos setores em csv\n");
         printf("\033[1;32m[ 0 ]\033[0m - Voltar\n");
         printf("\033[1;34mOpcao escolhida:\033[0m ");
         while(scanf("%i", &opcao) != 1){
@@ -694,7 +725,10 @@
         printf("\033[1;32m[ 7 ]\033[0m - Exportar relatorio de variacao por setor");
         printf("\033[1;32m[ 8 ]\033[0m - Exportar relatorio de leitura pelo setor");
         printf("\033[1;32m[ 9 ]\033[0m - Exportar relatorio de leitura por tipo");
-        printf("\033[1;31m[ 10 ] - REMOVER UM SENSOR]\033[0m\n");
+        printf("\033[1;32m[ 10 ]\033[0m - Exportar relatorio de variacao por setor em csv");
+        printf("\033[1;32m[ 11 ]\033[0m - Exportar relatorio de leitura pelo setor em csv");
+        printf("\033[1;32m[ 12 ]\033[0m - Exportar relatorio de leitura por tipo em csv");
+        printf("\033[1;31m[ 13 ] - REMOVER UM SENSOR]\033[0m\n");
         printf("\033[1;32m[ 0 ]\033[0m - Voltar\n");
         printf("\033[1;34mOpcao escolhida:\033[0m ");
         while(scanf("%i", &opcao) != 1){
@@ -861,6 +895,8 @@
         printf("\033[1;32m[ 3 ]\033[0m - Relatorio de variacao\n");
         printf("\033[1;32m[ 4 ]\033[0m - Exportar lista de Leituras\n");
         printf("\033[1;32m[ 5 ]\033[0m - Exportar relatorio de variacao\n");
+        printf("\033[1;32m[ 6 ]\033[0m - Exportar lista de Leituras em csv\n");
+        printf("\033[1;32m[ 7 ]\033[0m - Exportar relatorio de variacao em csv\n");
         printf("\033[1;32m[ 0 ]\033[0m - Voltar\n");
         printf("\033[1;34mOpcao escolhida:\033[0m ");
         while(scanf("%i", &opcao) != 1){
@@ -1663,7 +1699,7 @@ void exportar_relatorio_de_leitura_por_setor_em_csv(setores_t *setor,  int qtd_s
     fp = fopen(nome_do_arquivo, "w"); 
 
     fprintf(fp, "Setor;SensorSetor;SensorID;Tipo;FaixaMin;FaixaMax;Horario1;Leitura1;Horario2;Leitura2\n");
-    for(setor, setor != NULL; setor = setor->prox) {
+    for(setor; setor != NULL; setor = setor->prox){
         fprintf(fp, "%i;", setor->id_do_setor);
         
         if(setor->qtd_sensores_no_setor > 0){
@@ -1677,10 +1713,9 @@ void exportar_relatorio_de_leitura_por_setor_em_csv(setores_t *setor,  int qtd_s
                         if(lista_de_sensores_aux->numero_da_leitura > 1){
                             fprintf(fp, "%s;", lista_de_sensores_aux->horario_1);
                             fprintf(fp, "%.2f;", lista_de_sensores_aux->primeira_leitura);
-                            
                             if(lista_de_sensores_aux->numero_da_leitura > 2){
                                 fprintf(fp, "%s;", lista_de_sensores_aux->horario_2);
-                                fprintf(fp, "%.2f\n", lista_de_sensores_aux->segunda_leitura);
+                                fprintf(fp, "%.2f;\n", lista_de_sensores_aux->segunda_leitura);
                                 
                             }
                         }
@@ -1689,8 +1724,8 @@ void exportar_relatorio_de_leitura_por_setor_em_csv(setores_t *setor,  int qtd_s
         
     }
     fclose(fp);
+    }
 }
-
 
 void exportar_relatorio_de_variacao_por_setor_em_csv(setores_t *setor){
      sensores_t *lista_de_sensores_aux = setor->sensores_do_setor;
@@ -1701,7 +1736,7 @@ void exportar_relatorio_de_variacao_por_setor_em_csv(setores_t *setor){
         retirar_enter(nome_do_arquivo);
         
         FILE *fp = fopen(nome_do_arquivo,"w");
-        fprintf(fp, "Setor;SensorSetor;SensorID;Variacao\n");
+        fprintf(fp, "Setor;IdSensorSetor;IdSetor;Variacao\n");
         fprintf(fp, "%i;", setor->id_do_setor);
                 if(setor->qtd_sensores_no_setor > 0){
                     for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
@@ -1716,28 +1751,142 @@ void exportar_relatorio_de_variacao_por_setor_em_csv(setores_t *setor){
 }
 
 void exportar_relatorio_de_leitura_pelo_setor_em_csv(setores_t *setor){
+                sensores_t *lista_de_sensores_aux = NULL;
 
-}
+            string nome_do_arquivo; 
+            printf("Nome do arquivo: "); 
+            fgets(nome_do_arquivo, T_MAX_STR, stdin); 
+            retirar_enter(nome_do_arquivo);
+
+            FILE *fp = fopen(nome_do_arquivo,"w");
+            fprintf(fp, "IdSetor;IdSensorSetor;IdSensor;Tipo;FaixaLeitura1;FaixaLeitura2;Horario1;Leitura1;Horario2;Leitura2\n");
+            fprintf(fp, "%i;", setor->id_do_setor);
+            if(setor->qtd_sensores_no_setor > 0){
+                lista_de_sensores_aux = setor->sensores_do_setor;
+                for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
+                    fprintf(fp, "%i;", lista_de_sensores_aux->id_do_sensor_no_setor);
+                    fprintf(fp, "%i;", lista_de_sensores_aux->id_do_sensor);
+                    fprintf(fp, "%s;", lista_de_sensores_aux->tipo);
+                    fprintf(fp, "%.2f;", lista_de_sensores_aux->faixa_leitura_1);
+                    fprintf(fp, "%.2f;", lista_de_sensores_aux->faixa_leitura_2);
+                    if(lista_de_sensores_aux->numero_da_leitura > 1){
+                        fprintf(fp, "%s;", lista_de_sensores_aux->horario_1);
+                        fprintf(fp, "%2.f;", lista_de_sensores_aux->primeira_leitura);
+                        if(lista_de_sensores_aux->numero_da_leitura > 2){
+                            fprintf(fp, "%s;", lista_de_sensores_aux->horario_2);
+                            fprintf(fp, "%2.f;\n", lista_de_sensores_aux->segunda_leitura);
+                        }
+                    }
+                }   
+            }
+            fclose(fp);
+    }
+
 void exportar_relatorio_de_variacao_por_sensor_em_csv(sensores_t *sensor){
-
+        string nome_do_arquivo; 
+        printf("Nome do arquivo: "); 
+        fgets(nome_do_arquivo, T_MAX_STR, stdin); 
+        retirar_enter(nome_do_arquivo);
+        FILE *fp = fopen(nome_do_arquivo,"w");
+        fprintf(fp, "IdSensorSetor;VariacaoLeitura\n");
+        if(sensor->numero_da_leitura > 2){
+        fprintf(fp, "%i;", sensor->id_do_sensor_no_setor);
+        fprintf(fp, "%.2f;\n", sensor->variacao_leitura);     
+        } 
 }
 void exportar_relatorio_de_leitura_por_tipo_em_csv(setores_t *setor){
+    getchar();
+        sensores_t *lista_de_sensores_aux = setor->sensores_do_setor;
+        int tipo_nao_econtrado = 1;
+        string tipo;
+        printf("Tipo: ");
+        fgets(tipo, T_MAX_STR, stdin);
+        retirar_enter(tipo);
+        string nome_do_arquivo; 
+        printf("Nome do arquivo: "); 
+        fgets(nome_do_arquivo, T_MAX_STR, stdin); 
+        retirar_enter(nome_do_arquivo);
+        FILE *fp = fopen(nome_do_arquivo,"w");
 
+        fprintf(fp, "Setor;SensorSetor;SensorID;Tipo;FaixaMin;FaixaMax;Horario1;Leitura1;Horario2;Leitura2\n");
+            for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
+                if(!(strcmp(tipo, lista_de_sensores_aux->tipo))){
+                    fprintf(fp, "%i;", setor->id_do_setor);
+                    tipo_nao_econtrado = 0;
+                    fprintf(fp, "%i;", lista_de_sensores_aux->id_do_sensor_no_setor);
+                    fprintf(fp, "%i;", lista_de_sensores_aux->id_do_sensor);
+                    fprintf(fp, "%s;", lista_de_sensores_aux->tipo);
+                    fprintf(fp, "%.2f;", lista_de_sensores_aux->faixa_leitura_1);
+                    fprintf(fp, "%.2f;", lista_de_sensores_aux->faixa_leitura_2);
+                    if(lista_de_sensores_aux->numero_da_leitura > 1){
+                        fprintf(fp, "%s;", lista_de_sensores_aux->horario_1);
+                        fprintf(fp, "%2.f;", lista_de_sensores_aux->primeira_leitura);
+                        if(lista_de_sensores_aux->numero_da_leitura > 2){
+                            fprintf(fp, "%s;", lista_de_sensores_aux->horario_2);
+                            fprintf(fp, "%2.f\n;", lista_de_sensores_aux->segunda_leitura);
+                        }
+                    }
+                }
+            }
+            if(tipo_nao_econtrado){
+                fprintf(fp, "%s", tipo);
+            }       
+        fclose(fp);
 }
 void exportar_relatorio_da_media_dos_setores_em_csv(setores_t *setor, int qtd_setores_na_planta){
+     string nome_do_arquivo; 
+        printf("Nome do arquivo: "); 
+        fgets(nome_do_arquivo, T_MAX_STR, stdin); 
+        retirar_enter(nome_do_arquivo);
 
+        FILE *fp = fopen(nome_do_arquivo,"w");
+        sensores_t *lista_de_sensores_aux = NULL;
+        fprintf(fp, "Setor;IdSensorSetor;IdSensor;Tipo;Leitura1;Leitura2;Media\n");
+        if(qtd_setores_na_planta > 0){
+            for(setor; setor != NULL; setor = setor->prox){
+                fprintf(fp, "%i", setor->id_do_setor);
+                if(setor->qtd_sensores_no_setor > 0){
+                    lista_de_sensores_aux = setor->sensores_do_setor;
+                    for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
+                        fprintf(fp, "%i;", lista_de_sensores_aux->id_do_sensor_no_setor);
+                        fprintf(fp, "%i;", lista_de_sensores_aux->id_do_sensor);
+                        fprintf(fp, "%s;", lista_de_sensores_aux->tipo);
+                        fprintf(fp, "%.2f;", lista_de_sensores_aux->faixa_leitura_1);
+                        fprintf(fp, "%.2f;", lista_de_sensores_aux->faixa_leitura_2);
+                        if(lista_de_sensores_aux->numero_da_leitura > 1){
+                            if(lista_de_sensores_aux->numero_da_leitura > 2){
+                                fprintf(fp, "%.2f;\n", lista_de_sensores_aux->media);
+                            }
+                           
+                        }
+                        
+                        
+                    }
+                }
+                
+            }
+        }
+        
+            fclose(fp);
 }
-void exportar_relatorio_de_leitura_por_sensor_em_csv(sensores_t *sensor){
-
+void exportar_relatorio_de_leitura_por_sensor_em_csv(sensores_t *sensor_escolhido){
+    string nome_do_arquivo; 
+        printf("Nome do arquivo: "); 
+        fgets(nome_do_arquivo, T_MAX_STR, stdin); 
+        retirar_enter(nome_do_arquivo);
+        
+        FILE *fp = fopen(nome_do_arquivo,"w");
+        fprintf(fp, "Horario1;Leitura1;Horario2;Leitura2\n");
+        if(sensor_escolhido->numero_da_leitura > 1){
+                        fprintf(fp, "%s;", sensor_escolhido->horario_1);
+                        fprintf(fp, "%2.f;", sensor_escolhido->primeira_leitura);
+                        if(sensor_escolhido->numero_da_leitura > 2){
+                            fprintf(fp, "%s;", sensor_escolhido->horario_2);
+                            fprintf(fp, " %2.f\n;", sensor_escolhido->segunda_leitura);
+                        }
+                    }
+        fclose(fp);
 }
-
-
-
-
-
-
-
-
 
 void exportar_relatorio_de_leitura_por_setor_em_html(setores_t *setor,  int qtd_setores_na_planta){
 
