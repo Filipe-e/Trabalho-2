@@ -1442,14 +1442,15 @@
         if(qtd_setores_na_planta > 0){
             for(setor; setor != NULL; setor = setor->prox){
                 fprintf(fp, "=================================\n");
-                fprintf(fp, "Relatorio de Sensores do Setor \033[1;32m[%i]\033[0m: \n", setor->id_do_setor);
+                fprintf(fp, "Relatorio de Sensores do Setor %i: \n", setor->id_do_setor);
                 if(setor->qtd_sensores_no_setor > 0){
                     lista_de_sensores_aux = setor->sensores_do_setor;
                     for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
-                        fprintf(fp, "Sensor numero \033[1;32m[%i]\033[0m\n", lista_de_sensores_aux->id_do_sensor_no_setor);
-                        fprintf(fp, "Sensor\t \033[1;32m[%i]\033[0m\n", lista_de_sensores_aux->id_do_sensor);
-                        fprintf(fp, "Tipo:\t \033[1;32m%s\033[0m\n", lista_de_sensores_aux->tipo);
-                        fprintf(fp, "Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", lista_de_sensores_aux->faixa_leitura_1, lista_de_sensores_aux->faixa_leitura_2);
+                        fprintf(fp, "Sensor numero :%i\n", lista_de_sensores_aux->id_do_sensor_no_setor);
+                        fprintf(fp, "Sensor\t :%i\n", lista_de_sensores_aux->id_do_sensor);
+                        fprintf(fp, "Tipo:\t :%s\n", lista_de_sensores_aux->tipo);
+                        fprintf(fp, "Faixa de leitura: %.2f\n", lista_de_sensores_aux->faixa_leitura_1);
+                        fprintf(fp, "Faixa de leitura: %.2f\n", lista_de_sensores_aux->faixa_leitura_2);
                         if(lista_de_sensores_aux->numero_da_leitura > 1){
                             fprintf(fp, "Primeira Leitura: \n");
                             fprintf(fp, "[%s]\n", lista_de_sensores_aux->horario_1);
@@ -1497,11 +1498,11 @@
         }
         
         fprintf(fp, "=================================\n");
-            fprintf(fp, "Relatorio de Variacao dos Sensores do Setor \033[1;32m[%i]\033[0m: \n", setor->id_do_setor);
+            fprintf(fp, "Relatorio de Variacao dos Sensores do Setor %i: \n", setor->id_do_setor);
                 if(setor->qtd_sensores_no_setor > 0){
                     for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
-                        fprintf(fp, "Sensor \033[1;32m[%i]\033[0m\n", lista_de_sensores_aux->id_do_sensor_no_setor);
-                        fprintf(fp, "Sensor ID:\033[1;32m[%i]\033[0m\n", lista_de_sensores_aux->id_do_sensor);
+                        fprintf(fp, "Sensor %i\n", lista_de_sensores_aux->id_do_sensor_no_setor);
+                        fprintf(fp, "Sensor ID:%i\n", lista_de_sensores_aux->id_do_sensor);
                             if(lista_de_sensores_aux->numero_da_leitura > 2){
                                 fprintf(fp, "Variacao: %.2f\n", lista_de_sensores_aux->variacao_leitura);
                             }
@@ -1533,14 +1534,14 @@
             }
 
             printf("=================================\n");
-            printf("Relatorio de Sensores do Setor \033[1;32m[%i]\033[0m: \n", setor->id_do_setor);
+            printf("Relatorio de Sensores do Setor %i: \n", setor->id_do_setor);
             if(setor->qtd_sensores_no_setor > 0){
                 lista_de_sensores_aux = setor->sensores_do_setor;
                 for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
-                    fprintf(fp, "Sensor numero \033[1;32m[%i]\033[0m\n", lista_de_sensores_aux->id_do_sensor_no_setor);
-                    fprintf(fp, "Sensor\t \033[1;32m[%i]\033[0m\n", lista_de_sensores_aux->id_do_sensor);
-                    fprintf(fp, "Tipo:\t \033[1;32m%s\033[0m\n", lista_de_sensores_aux->tipo);
-                    fprintf(fp, "Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", lista_de_sensores_aux->faixa_leitura_1, lista_de_sensores_aux->faixa_leitura_2);
+                    fprintf(fp, "Sensor numero %i\n", lista_de_sensores_aux->id_do_sensor_no_setor);
+                    fprintf(fp, "Sensor\t %i\n", lista_de_sensores_aux->id_do_sensor);
+                    fprintf(fp, "Tipo:\t %s\n", lista_de_sensores_aux->tipo);
+                    fprintf(fp, "Faixa de leitura: %.2f - %.2f\n", lista_de_sensores_aux->faixa_leitura_1, lista_de_sensores_aux->faixa_leitura_2);
                     if(lista_de_sensores_aux->numero_da_leitura > 1){
                         fprintf(fp, "Primeira Leitura: \n");
                         fprintf(fp, "[%s]\n", lista_de_sensores_aux->horario_1);
@@ -1581,7 +1582,7 @@
         }
         fprintf(fp, "=================================\n");
                     if(sensor->numero_da_leitura > 2){
-                        fprintf(fp, "Sensor \033[1;32m[%i]\033[0m\n", industria->id_do_sensor_no_setor);
+                        fprintf(fp, "Sensor %i\n", industria->id_do_sensor_no_setor);
                         fprintf(fp, "Variacao: %.2f\n", industria->variacao_leitura);     
                     }
                     else{
@@ -1612,12 +1613,12 @@
         fprintf(fp, "=================================\n");
             for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
                 if(!(strcmp(tipo, lista_de_sensores_aux->tipo))){
-                    fprintf(fp, "Relatorio de Sensores do Setor \033[1;32m[%i]\033[0m: \n", setor->id_do_setor);
+                    fprintf(fp, "Relatorio de Sensores do Setor %i: \n", setor->id_do_setor);
                     tipo_nao_econtrado = 0;
-                    fprintf(fp, "Sensor numero \033[1;32m[%i]\033[0m\n", lista_de_sensores_aux->id_do_sensor_no_setor);
-                    fprintf(fp, "Sensor\t \033[1;32m[%i]\033[0m\n", lista_de_sensores_aux->id_do_sensor);
-                    fprintf(fp, "Tipo:\t \033[1;32m%s\033[0m\n", lista_de_sensores_aux->tipo);
-                    fprintf(fp, "Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", lista_de_sensores_aux->faixa_leitura_1, lista_de_sensores_aux->faixa_leitura_2);
+                    fprintf(fp, "Sensor numero %i\n", lista_de_sensores_aux->id_do_sensor_no_setor);
+                    fprintf(fp, "Sensor\t %i\n", lista_de_sensores_aux->id_do_sensor);
+                    fprintf(fp, "Tipo:\t %s\n", lista_de_sensores_aux->tipo);
+                    fprintf(fp, "Faixa de leitura: %.2f - %.2f\n", lista_de_sensores_aux->faixa_leitura_1, lista_de_sensores_aux->faixa_leitura_2);
                     if(lista_de_sensores_aux->numero_da_leitura > 1){
                         fprintf(fp, "Primeira Leitura: \n");
                         fprintf(fp, "[%s]\n", lista_de_sensores_aux->horario_1);
@@ -1659,14 +1660,14 @@
         if(qtd_setores_na_planta > 0){
             for(setor; setor != NULL; setor = setor->prox){
                 fprintf(fp, "=================================\n");
-                fprintf(fp, "Relatorio de Sensores do Setor \033[1;32m[%i]\033[0m: \n", setor->id_do_setor);
+                fprintf(fp, "Relatorio de Sensores do Setor %i: \n", setor->id_do_setor);
                 if(setor->qtd_sensores_no_setor > 0){
                     lista_de_sensores_aux = setor->sensores_do_setor;
                     for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
-                        fprintf(fp, "Sensor numero \033[1;32m[%i]\033[0m\n", lista_de_sensores_aux->id_do_sensor_no_setor);
-                        fprintf(fp, "Sensor\t \033[1;32m[%i]\033[0m\n", lista_de_sensores_aux->id_do_sensor);
-                        fprintf(fp, "Tipo:\t \033[1;32m%s\033[0m\n", lista_de_sensores_aux->tipo);
-                        fprintf(fp, "Faixa de leitura: \033[1;32m[%.2f - %.2f]\033[0m\n", lista_de_sensores_aux->faixa_leitura_1, lista_de_sensores_aux->faixa_leitura_2);
+                        fprintf(fp, "Sensor numero %i\n", lista_de_sensores_aux->id_do_sensor_no_setor);
+                        fprintf(fp, "Sensor\t %i\n", lista_de_sensores_aux->id_do_sensor);
+                        fprintf(fp, "Tipo:\t %s\n", lista_de_sensores_aux->tipo);
+                        fprintf(fp, "Faixa de leitura: %.2f - %.2f\n", lista_de_sensores_aux->faixa_leitura_1, lista_de_sensores_aux->faixa_leitura_2);
                         if(lista_de_sensores_aux->numero_da_leitura > 1){
                             if(lista_de_sensores_aux->numero_da_leitura > 2){
                                 fprintf(fp, "Media: %.2f\n", lista_de_sensores_aux->media);
@@ -1738,14 +1739,13 @@ void exportar_relatorio_de_leitura_por_setor_em_csv(setores_t *setor,  int qtd_s
         printf("Erro ao abrir o arquivo.\n");
         return;
         }
-
     fprintf(fp, "Setor;SensorSetor;SensorID;Tipo;FaixaMin;FaixaMax;Horario1;Leitura1;Horario2;Leitura2\n");
-    for(setor; setor != NULL; setor = setor->prox){
-        fprintf(fp, "%i;", setor->id_do_setor);
-        
-        if(setor->qtd_sensores_no_setor > 0){
-            lista_de_sensores_aux = setor->sensores_do_setor;
-                for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
+    if(qtd_setores_na_planta > 0){
+        for(setor; setor != NULL; setor = setor->prox){
+            fprintf(fp, "%i;", setor->id_do_setor);
+            if(setor->qtd_sensores_no_setor > 0){
+                lista_de_sensores_aux = setor->sensores_do_setor;
+                    for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
                         fprintf(fp, "%i;", lista_de_sensores_aux->id_do_sensor_no_setor);
                         fprintf(fp, "%i;", lista_de_sensores_aux->id_do_sensor);
                         fprintf(fp, "%s;", lista_de_sensores_aux->tipo);
@@ -1756,16 +1756,29 @@ void exportar_relatorio_de_leitura_por_setor_em_csv(setores_t *setor,  int qtd_s
                             fprintf(fp, "%.2f;", lista_de_sensores_aux->primeira_leitura);
                             if(lista_de_sensores_aux->numero_da_leitura > 2){
                                 fprintf(fp, "%s;", lista_de_sensores_aux->horario_2);
-                                fprintf(fp, "%.2f;\n", lista_de_sensores_aux->segunda_leitura);
-                                
+                                fprintf(fp, "%.2f;\n", lista_de_sensores_aux->segunda_leitura);  
+                            }
+                            else{
+                                fprintf(fp,"aguardando segunda leitura\n");
                             }
                         }
-                    fprintf(fp, "\n");
-                    }
+                        else{
+                            fprintf(fp,"Sem leitura\n");
+                        }
+                        fprintf(fp, "\n");
+                        }
+                
+            }
+            else{
+                fprintf(fp,"sem sensores cadastrados\n");
+            }
+        }
         
     }
-    fclose(fp);
+    else{
+        fprintf(fp,"sem setores cadastrados\n");
     }
+        fclose(fp);
 }
 
 void exportar_relatorio_de_variacao_por_setor_em_csv(setores_t *setor){
@@ -1792,6 +1805,9 @@ void exportar_relatorio_de_variacao_por_setor_em_csv(setores_t *setor){
                                 fprintf(fp, "%.2f\n;", lista_de_sensores_aux->variacao_leitura);
                             }
                         }
+                    }
+                    else{
+                        fprintf(fp,"Sem sensores cadastrados\n");
                     }
             fclose(fp);
 }
@@ -1827,8 +1843,17 @@ void exportar_relatorio_de_leitura_pelo_setor_em_csv(setores_t *setor){
                             fprintf(fp, "%s;", lista_de_sensores_aux->horario_2);
                             fprintf(fp, "%2.f;\n", lista_de_sensores_aux->segunda_leitura);
                         }
+                        else{
+                            fprintf(fp,"Aguardando segunda leitura\n");
+                        }
+                    }
+                    else{
+                        fprintf(fp,"Sem leituras\n");
                     }
                 }   
+            }
+            else{
+                fprintf(fp,"Sem sensores cadastrados\n");
             }
             fclose(fp);
     }
@@ -1850,7 +1875,11 @@ void exportar_relatorio_de_variacao_por_sensor_em_csv(sensores_t *sensor){
         if(sensor->numero_da_leitura > 2){
         fprintf(fp, "%i;", sensor->id_do_sensor_no_setor);
         fprintf(fp, "%.2f;\n", sensor->variacao_leitura);     
+        }
+        else{
+            fprintf(fp,"Sem leitura suficiente para o calculo de variacao");
         } 
+        fclose(fp);
 }
 void exportar_relatorio_de_leitura_por_tipo_em_csv(setores_t *setor){
     getchar();
@@ -1886,6 +1915,12 @@ void exportar_relatorio_de_leitura_por_tipo_em_csv(setores_t *setor){
                             fprintf(fp, "%s;", lista_de_sensores_aux->horario_2);
                             fprintf(fp, "%2.f\n;", lista_de_sensores_aux->segunda_leitura);
                         }
+                        else{
+                            fprintf(fp,"Aguardando segunda leitura\n");
+                        }
+                    }
+                    else{
+                        fprintf(fp,"Sem leitura\n");
                     }
                 }
             }
@@ -1923,14 +1958,25 @@ void exportar_relatorio_da_media_dos_setores_em_csv(setores_t *setor, int qtd_se
                             if(lista_de_sensores_aux->numero_da_leitura > 2){
                                 fprintf(fp, "%.2f;\n", lista_de_sensores_aux->media);
                             }
+                            else{
+                                fprintf(fp,"Sem leituras para executar a media\n");
+                            }
                            
                         }
-                        
+                        else{
+                            fprintf(fp,"Sem leitura");
+                        }
                         
                     }
                 }
+                else{
+                    fprintf(fp,"Sem sensores cadastrados");
+                }
                 
             }
+        }
+        else{
+            fprintf(fp,"Sem setores cadastrados");
         }
         
             fclose(fp);
@@ -1955,8 +2001,17 @@ void exportar_relatorio_de_leitura_por_sensor_em_csv(sensores_t *sensor_escolhid
                             fprintf(fp, "%s;", sensor_escolhido->horario_2);
                             fprintf(fp, " %2.f\n;", sensor_escolhido->segunda_leitura);
                         }
+                        else{
+                            fprintf(fp,"Aguardando segunda leitura");
+                            return;
+                        }
+                    }
+                    else{
+                        fprintf(fp,"Sem leitura");
+                        return;
                     }
         fclose(fp);
+
 }
 
 void exportar_relatorio_de_leitura_por_setor_em_html(setores_t *setor,  int qtd_setores_na_planta){
