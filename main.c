@@ -332,6 +332,9 @@
                                                                                         exportar_relatorio_de_leitura_por_sensor_em_csv(sensor_atual);
                                                                                         esperar_prosseguir();
                                                                                         break;
+                                                                                    case 8:
+                                                                                        exportar_relatorio_de_variacao_por_setor_em_html(setor_atual);
+                                                                                        break;
                                                                                     case 0: break;
                                                                                     default:
                                                                                         break;
@@ -394,6 +397,9 @@
                                                                         printf("\033[1;32mLista atualizada com sucesso\033[0m\n");
                                                                         listar_sensores_por_setor(setor_atual->sensores_do_setor);
                                                                         esperar_prosseguir();
+                                                                        break;
+                                                                    case 14:
+                                                                        exportar_relatorio_de_leitura_por_setor_em_html(sensor_atual, industria_atual->qtd_setores_na_planta);
                                                                         break;
                                                                     case 0: break;
                                                                     default:
@@ -2015,15 +2021,157 @@ void exportar_relatorio_de_leitura_por_sensor_em_csv(sensores_t *sensor_escolhid
 }
 
 void exportar_relatorio_de_leitura_por_setor_em_html(setores_t *setor,  int qtd_setores_na_planta){
+    getchar();
+    FILE *fp = NULL;
+    sensores_t *lista_de_sensores_aux = NULL;
 
+    string nome_arq; 
+    printf("Nome do arquivo: "); 
+    fgets(nome_arq, T_MAX_STR, stdin); 
+    retirar_enter(nome_arq);
+    strcat(nome_arq, ".html");
+    fp = fopen(nome_arq, "w"); 
+    if (fp == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return;
+        }
+    fprintf(fp, "<html>\n");
+    fprintf(fp, "<head>\n");
+    fprintf(fp, "   <title> Relatorio de Variacao dos Sensores pelos Setor</title>\n");
+    fprintf(fp, "</head>\n");
+    fprintf(fp, "<body>\n");
+    if(qtd_setores_na_planta > 0){
+        for(setor; setor != NULL; setor = setor->prox){
+            fprintf(fp, "<h1>Relatorio de leitura dos Sensores do Setor [%i]\n</h1>\n", setor->id_do_setor);;
+            if(setor->qtd_sensores_no_setor > 0){
+                lista_de_sensores_aux = setor->sensores_do_setor;
+                    for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
+                        fprintf(fp, "<p>Sensor n. [%i]\n</p>", lista_de_sensores_aux->id_do_sensor_no_setor);
+                        fprintf(fp, "<p>Sensor - ID [%i]\n</p>", lista_de_sensores_aux->id_do_sensor);
+                        fprintf(fp, "<p>Tipo: %s\n</p>", lista_de_sensores_aux->tipo);
+                        fprintf(fp, "<p>Faixa: [%.2f - %.2f]\n</p>", lista_de_sensores_aux->faixa_leitura_1 , lista_de_sensores_aux->faixa_leitura_2);
+                        if(lista_de_sensores_aux->numero_da_leitura > 1){
+                            fprintf(fp, "<p>Horario 1: %s\n</p>;", lista_de_sensores_aux->horario_1);
+                            fprintf(fp, "<p>Leitura 1: %.2f\n</p>;", lista_de_sensores_aux->primeira_leitura);
+                            if(lista_de_sensores_aux->numero_da_leitura > 2){
+                                fprintf(fp, "<p>Horario 2: %s\n</p>\n", lista_de_sensores_aux->horario_2);
+                                fprintf(fp, "<p>Leitura 2: %.2f\n</p>\n", lista_de_sensores_aux->segunda_leitura);  
+                            }
+                            else{
+                                fprintf(fp,"<p>aguardando segunda leitura</p>\n");
+                            }
+                        }
+                        else{
+                            fprintf(fp,"<p>Sem leituras</p>\n");
+                        }
+                        fprintf(fp, "\n");
+                        }
+                
+            }
+            else{
+                fprintf(fp,"sem sensores cadastrados\n");
+            }
+        }
+        
+    }
+    else{
+        fprintf(fp,"sem setores cadastrados\n");
+    }
+    
+        fprintf(fp, "</body></html>\n");
+        fclose(fp);
 
 }
     
 void exportar_relatorio_de_variacao_por_setor_em_html(setores_t *setor){
+    sensores_t *lista_de_sensores_aux = setor->sensores_do_setor;
+    FILE *fp = NULL;
+     getchar();
+    string nome_arq; 
+        printf("Nome do arquivo: "); 
+        fgets(nome_arq, T_MAX_STR, stdin); 
+        retirar_enter(nome_arq);
+        strcat(nome_arq, ".html");
 
+    fp = fopen(nome_arq, "w");
+        fprintf(fp, "<html>\n");
+        fprintf(fp, "<head>\n");
+        fprintf(fp, "   <title> Relatorio de Variacao dos Sensores por Setor</title>\n");
+        fprintf(fp, "</head>\n");
+        fprintf(fp, "<body>\n");
+        fprintf(fp, "<h1>Relatorio de Variacao dos Sensores do Setor [%i]\n", setor->id_do_setor);
+                if(setor->qtd_sensores_no_setor > 0){
+                    for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
+                        fprintf(fp, "<p>=================================\n</p>\n"); 
+                        fprintf(fp, "<p>Sensor [%i]</p>\n", lista_de_sensores_aux->id_do_sensor_no_setor);
+                        fprintf(fp, "<p>Sensor ID:[%i]</p>\n", lista_de_sensores_aux->id_do_sensor);
+                            if(lista_de_sensores_aux->numero_da_leitura > 2){
+                                fprintf(fp, "<p>Variacao: %.2f</p>\n", lista_de_sensores_aux->variacao_leitura);
+                            }
+                            else{
+                                fprintf(fp, "<p>Sem leitura suficientes para o calculo da variacao</p>\n");
+                            }
+                        fprintf(fp, "<p>=================================\n\n</p>\n"); 
+                        }
+                    }
+                    else{
+                        fprintf(fp, "<p>Sem sensores cadastrados.</p>\n");
+                    }
+        fprintf(fp, "</body>\n");
+        fprintf(fp, "</body></html>\n");
+        fclose(fp);
 }
 
 void exportar_relatorio_de_leitura_pelo_setor_em_html(setores_t *setor){
+    getchar();
+    FILE *fp = NULL;
+    sensores_t *lista_de_sensores_aux = NULL;
+
+    string nome_arq; 
+    printf("Nome do arquivo: "); 
+    fgets(nome_arq, T_MAX_STR, stdin); 
+    retirar_enter(nome_arq);
+    strcat(nome_arq, ".html");
+    fp = fopen(nome_arq, "w"); 
+    if (fp == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return;
+        }
+    fprintf(fp, "<html>\n");
+    fprintf(fp, "<head>\n");
+    fprintf(fp, "   <title> Relatorio de leitura dos Sensor pelo Setor</title>\n");
+    fprintf(fp, "</head>\n");
+    fprintf(fp, "<body>\n");
+    fprintf(fp, "<h1>Relatorio de leitura dos Sensores do Setor [%i]\n</h1>\n", setor->id_do_setor);;
+    if(setor->qtd_sensores_no_setor > 0){
+        lista_de_sensores_aux = setor->sensores_do_setor;
+        fprintf(fp, "<p>Sensor n. [%i]\n</p>", lista_de_sensores_aux->id_do_sensor_no_setor);
+        fprintf(fp, "<p>Sensor - ID [%i]\n</p>", lista_de_sensores_aux->id_do_sensor);
+        fprintf(fp, "<p>Tipo: %s\n</p>", lista_de_sensores_aux->tipo);
+        fprintf(fp, "<p>Faixa: [%.2f - %.2f]\n</p>", lista_de_sensores_aux->faixa_leitura_1 , lista_de_sensores_aux->faixa_leitura_2);
+        if(lista_de_sensores_aux->numero_da_leitura > 1){
+            fprintf(fp, "<p>Horario 1: %s\n</p>;", lista_de_sensores_aux->horario_1);
+            fprintf(fp, "<p>Leitura 1: %.2f\n</p>;", lista_de_sensores_aux->primeira_leitura);
+            if(lista_de_sensores_aux->numero_da_leitura > 2){
+                fprintf(fp, "<p>Horario 2: %s\n</p>\n", lista_de_sensores_aux->horario_2);
+                fprintf(fp, "<p>Leitura 2: %.2f\n</p>\n", lista_de_sensores_aux->segunda_leitura);  
+            }
+            else{
+                fprintf(fp,"<p>aguardando segunda leitura</p>\n");
+            }
+        }
+        else{
+            fprintf(fp,"<p>Sem leituras</p>\n");
+        }
+        fprintf(fp, "\n");
+    }
+    else{
+        fprintf(fp,"sem sensores cadastrados\n");
+    }
+        
+    
+        fprintf(fp, "</body></html>\n");
+        fclose(fp);
 
 }
 
