@@ -660,9 +660,9 @@
         printf("\033[1;32m[ 7 ]\033[0m - Exportar relatorio dos setores em txt\n");
         printf("\033[1;32m[ 8 ]\033[0m - Exportar elatorio de media dos setores em txt\n");
         printf("\033[1;32m[ 9 ]\033[0m - Exportar relatorio dos setores em csv\n");
-        printf("\033[1;32m[ 10]\033[0m - Exportar relatorio de media dos setores em csv\n");
-        printf("\033[1;32m[ 10]\033[0m - Exportar relatorio de media dos setores em csv\n");
-        printf("\033[1;32m[ 10]\033[0m - Exportar relatorio de media dos setores em csv\n");
+        printf("\033[1;32m[ 10 ]\033[0m - Exportar relatorio de media dos setores em csv\n");
+        printf("\033[1;32m[ 11 ]\033[0m - Exportar relatorio de leitura por setor em html\n");
+        printf("\033[1;32m[ 12 ]\033[0m - Exportar relatorio da media dos setores em html\n");
         printf("\033[1;32m[ 0 ]\033[0m - Voltar\n");
         printf("\033[1;34mOpcao escolhida:\033[0m ");
         while(scanf("%i", &opcao) != 1){
@@ -1464,6 +1464,7 @@
         printf("Nome do arquivo: "); 
         fgets(nome_do_arquivo, T_MAX_STR, stdin); 
         retirar_enter(nome_do_arquivo);
+        strcat(nome_do_arquivo, ".txt");
 
         FILE *fp = fopen(nome_do_arquivo,"w");
         if (fp == NULL) {
@@ -1520,6 +1521,7 @@
         printf("Nome do arquivo: "); 
         fgets(nome_do_arquivo, T_MAX_STR, stdin); 
         retirar_enter(nome_do_arquivo);
+        strcat(nome_do_arquivo, ".txt");
         
         FILE *fp = fopen(nome_do_arquivo,"w");
 
@@ -1538,13 +1540,13 @@
                                 fprintf(fp, "Variacao: %.2f\n", lista_de_sensores_aux->variacao_leitura);
                             }
                             else{
-                                fprintf(fp, "\033[1;31mSem leitura suficientes para o calculo da variacao\033[0m\n");
+                                fprintf(fp, "Sem leitura suficientes para o calculo da variacao\n");
                             }
                         fprintf(fp, "=================================\n\n"); 
                         }
                     }
                     else{
-                        fprintf(fp, "\033[31mSem sensores cadastrados.\033[0m\n");
+                        fprintf(fp, "Sem sensores cadastrados.\n");
                     }
             fclose(fp);
         }
@@ -1557,15 +1559,15 @@
             printf("Nome do arquivo: "); 
             fgets(nome_do_arquivo, T_MAX_STR, stdin); 
             retirar_enter(nome_do_arquivo);
-
+            strcat(nome_do_arquivo, ".txt");
             FILE *fp = fopen(nome_do_arquivo,"w");
             if (fp == NULL) {
             printf("Erro ao abrir o arquivo.\n");
             return;
             }
 
-            printf("=================================\n");
-            printf("Relatorio de Sensores do Setor %i: \n", setor->id_do_setor);
+            fprintf(fp, "=================================\n");
+            fprintf(fp, "Relatorio de Sensores do Setor %i: \n", setor->id_do_setor);
             if(setor->qtd_sensores_no_setor > 0){
                 lista_de_sensores_aux = setor->sensores_do_setor;
                 for(lista_de_sensores_aux; lista_de_sensores_aux != NULL; lista_de_sensores_aux = lista_de_sensores_aux->prox){
@@ -1583,29 +1585,28 @@
                             fprintf(fp, "-> %2.f\n", lista_de_sensores_aux->segunda_leitura);
                         }
                         else{
-                            fprintf(fp, "\033[31mAguardando segunda leitura.\033[0m\n");
+                            fprintf(fp, "Aguardando segunda leitura.\n");
                         }
                     }
                     else{
-                        fprintf(fp, "\033[31mSem leituras.\033[0m\n");
+                        fprintf(fp, "Sem leituras.\n");
                     }
                     fprintf(fp, "=================================\n\n"); 
                 }
             }
             else{
-                fprintf(fp, "\033[31mSem sensores cadastrados.\033[0m\n");
+                fprintf(fp, "Sem sensores cadastrados.\n");
             }
             fclose(fp);
     }
 
     void exportar_relatorio_de_variacao_por_sensor(sensores_t *sensor){
         getchar();
-        sensores_t *industria = NULL;
         string nome_do_arquivo; 
         printf("Nome do arquivo: "); 
         fgets(nome_do_arquivo, T_MAX_STR, stdin); 
         retirar_enter(nome_do_arquivo);
-        
+        strcat(nome_do_arquivo, ".txt");
         FILE *fp = fopen(nome_do_arquivo,"w");
         if (fp == NULL) {
         printf("Erro ao abrir o arquivo.\n");
@@ -1613,11 +1614,13 @@
         }
         fprintf(fp, "=================================\n");
                     if(sensor->numero_da_leitura > 2){
-                        fprintf(fp, "Sensor %i\n", industria->id_do_sensor_no_setor);
-                        fprintf(fp, "Variacao: %.2f\n", industria->variacao_leitura);     
+                        fprintf(fp, "Sensor no Setor %i\n", sensor->id_do_sensor_no_setor);
+                        fprintf(fp, "Sensor %i\n", sensor->id_do_sensor);
+                        fprintf(fp, "Tipo: %s\n", sensor->tipo);
+                        fprintf(fp, "Variacao: %.2f\n", sensor->variacao_leitura);     
                     }
                     else{
-                        fprintf(fp, "\033[1;31mSem leitura suficientes para o calculo da variacao\033[0m\n");
+                        fprintf(fp, "Sem leitura suficientes para o calculo da variacao\n");
                     }
                 fprintf(fp, "=================================\n\n"); 
         fclose(fp);
@@ -1635,10 +1638,11 @@
         printf("Nome do arquivo: "); 
         fgets(nome_do_arquivo, T_MAX_STR, stdin); 
         retirar_enter(nome_do_arquivo);
+        strcat(nome_do_arquivo, ".txt");
         FILE *fp = fopen(nome_do_arquivo,"w");
         if (fp == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
-        return;
+            printf("Erro ao abrir o arquivo.\n");
+            return;
         }
 
         fprintf(fp, "=================================\n");
@@ -1660,17 +1664,17 @@
                             fprintf(fp, "-> %2.f\n", lista_de_sensores_aux->segunda_leitura);
                         }
                         else{
-                            fprintf(fp, "\033[31mAguardando segunda leitura.\033[0m\n");
+                            fprintf(fp, "Aguardando segunda leitura.\n");
                         }
                     }
                     else{
-                        fprintf(fp, "\033[31mSem leituras.\033[0m\n");
+                        fprintf(fp, "Sem leituras.\n");
                     }
                     fprintf(fp, "=================================\n\n"); 
                 }
             }
             if(tipo_nao_econtrado){
-                fprintf(fp, "Nao foi encontrado sensor com o tipo: %s", tipo);
+                fprintf(stdout, "Nao foi encontrado sensor com o tipo: %s", tipo);
             }       
         fclose(fp);
     }
@@ -1681,7 +1685,7 @@
         printf("Nome do arquivo: "); 
         fgets(nome_do_arquivo, T_MAX_STR, stdin); 
         retirar_enter(nome_do_arquivo);
-
+        strcat(nome_do_arquivo, ".txt");
         FILE *fp = fopen(nome_do_arquivo,"w");
         if (fp == NULL) {
         printf("Erro ao abrir o arquivo.\n");
@@ -1730,7 +1734,7 @@
         printf("Nome do arquivo: "); 
         fgets(nome_do_arquivo, T_MAX_STR, stdin); 
         retirar_enter(nome_do_arquivo);
-        
+        strcat(nome_do_arquivo, ".txt");
         FILE *fp = fopen(nome_do_arquivo,"w");
         if (fp == NULL) {
         printf("Erro ao abrir o arquivo.\n");
@@ -1765,6 +1769,7 @@ void exportar_relatorio_de_leitura_por_setor_em_csv(setores_t *setor,  int qtd_s
     printf("Nome do arquivo: "); 
     fgets(nome_do_arquivo, T_MAX_STR, stdin); 
     retirar_enter(nome_do_arquivo);
+    strcat(nome_do_arquivo, ".csv");
     fp = fopen(nome_do_arquivo, "w"); 
     if (fp == NULL) {
         printf("Erro ao abrir o arquivo.\n");
@@ -1814,13 +1819,13 @@ void exportar_relatorio_de_leitura_por_setor_em_csv(setores_t *setor,  int qtd_s
 
 void exportar_relatorio_de_variacao_por_setor_em_csv(setores_t *setor){
     getchar();
-     sensores_t *lista_de_sensores_aux = setor->sensores_do_setor;
+    sensores_t *lista_de_sensores_aux = setor->sensores_do_setor;
         
         string nome_do_arquivo; 
         printf("Nome do arquivo: "); 
         fgets(nome_do_arquivo, T_MAX_STR, stdin); 
         retirar_enter(nome_do_arquivo);
-        
+        strcat(nome_do_arquivo, ".csv");
         FILE *fp = fopen(nome_do_arquivo,"w");
         if (fp == NULL) {
         printf("Erro ao abrir o arquivo.\n");
@@ -1838,7 +1843,7 @@ void exportar_relatorio_de_variacao_por_setor_em_csv(setores_t *setor){
                         }
                     }
                     else{
-                        fprintf(fp,"Sem sensores cadastrados\n");
+                        fprintf(fp, "Sem sensores cadastrados\n");
                     }
             fclose(fp);
 }
@@ -1851,6 +1856,7 @@ void exportar_relatorio_de_leitura_pelo_setor_em_csv(setores_t *setor){
             printf("Nome do arquivo: "); 
             fgets(nome_do_arquivo, T_MAX_STR, stdin); 
             retirar_enter(nome_do_arquivo);
+            strcat(nome_do_arquivo, ".csv");
 
             FILE *fp = fopen(nome_do_arquivo,"w");
             if (fp == NULL) {
@@ -1896,6 +1902,7 @@ void exportar_relatorio_de_variacao_por_sensor_em_csv(sensores_t *sensor){
         printf("Nome do arquivo: "); 
         fgets(nome_do_arquivo, T_MAX_STR, stdin); 
         retirar_enter(nome_do_arquivo);
+        strcat(nome_do_arquivo, ".csv");
         
         FILE *fp = fopen(nome_do_arquivo,"w");
         if (fp == NULL) {
@@ -1904,11 +1911,11 @@ void exportar_relatorio_de_variacao_por_sensor_em_csv(sensores_t *sensor){
         }
         fprintf(fp, "IdSensorSetor;VariacaoLeitura\n");
         if(sensor->numero_da_leitura > 2){
-        fprintf(fp, "%i;", sensor->id_do_sensor_no_setor);
-        fprintf(fp, "%.2f;\n", sensor->variacao_leitura);     
+            fprintf(fp, "%i;", sensor->id_do_sensor_no_setor);
+            fprintf(fp, "%.2f;\n", sensor->variacao_leitura);     
         }
         else{
-            fprintf(fp,"Sem leitura suficiente para o calculo de variacao");
+            fprintf(fp,"Sem leitura suficiente para o calculo de variacao\n");
         } 
         fclose(fp);
 }
@@ -1924,6 +1931,7 @@ void exportar_relatorio_de_leitura_por_tipo_em_csv(setores_t *setor){
         printf("Nome do arquivo: "); 
         fgets(nome_do_arquivo, T_MAX_STR, stdin); 
         retirar_enter(nome_do_arquivo);
+        strcat(nome_do_arquivo, ".csv");
         FILE *fp = fopen(nome_do_arquivo,"w");
         if (fp == NULL) {
         printf("Erro ao abrir o arquivo.\n");
@@ -1944,7 +1952,7 @@ void exportar_relatorio_de_leitura_por_tipo_em_csv(setores_t *setor){
                         fprintf(fp, "%2.f;", lista_de_sensores_aux->primeira_leitura);
                         if(lista_de_sensores_aux->numero_da_leitura > 2){
                             fprintf(fp, "%s;", lista_de_sensores_aux->horario_2);
-                            fprintf(fp, "%2.f\n;", lista_de_sensores_aux->segunda_leitura);
+                            fprintf(fp, "%2.f;\n", lista_de_sensores_aux->segunda_leitura);
                         }
                         else{
                             fprintf(fp,"Aguardando segunda leitura\n");
@@ -1956,7 +1964,7 @@ void exportar_relatorio_de_leitura_por_tipo_em_csv(setores_t *setor){
                 }
             }
             if(tipo_nao_econtrado){
-                fprintf(fp, "%s", tipo);
+                fprintf(stdout, "Tipo: %s nao encontrado.\n", tipo);
             }       
         fclose(fp);
 }
@@ -1966,7 +1974,7 @@ void exportar_relatorio_da_media_dos_setores_em_csv(setores_t *setor, int qtd_se
         printf("Nome do arquivo: "); 
         fgets(nome_do_arquivo, T_MAX_STR, stdin); 
         retirar_enter(nome_do_arquivo);
-
+        strcat(nome_do_arquivo, ".csv");
         FILE *fp = fopen(nome_do_arquivo,"w");
         if (fp == NULL) {
         printf("Erro ao abrir o arquivo.\n");
@@ -1995,19 +2003,19 @@ void exportar_relatorio_da_media_dos_setores_em_csv(setores_t *setor, int qtd_se
                            
                         }
                         else{
-                            fprintf(fp,"Sem leitura");
+                            fprintf(fp,"Sem leitura\n");
                         }
                         
                     }
                 }
                 else{
-                    fprintf(fp,"Sem sensores cadastrados");
+                    fprintf(fp,"Sem sensores cadastrados\n");
                 }
                 
             }
         }
         else{
-            fprintf(fp,"Sem setores cadastrados");
+            fprintf(fp,"Sem setores cadastrados\n");
         }
         
             fclose(fp);
@@ -2018,6 +2026,7 @@ void exportar_relatorio_de_leitura_por_sensor_em_csv(sensores_t *sensor_escolhid
         printf("Nome do arquivo: "); 
         fgets(nome_do_arquivo, T_MAX_STR, stdin); 
         retirar_enter(nome_do_arquivo);
+        strcat(nome_do_arquivo, ".csv");
         
         FILE *fp = fopen(nome_do_arquivo,"w");
         if (fp == NULL) {
@@ -2281,7 +2290,10 @@ void exportar_relatorio_de_leitura_por_tipo_em_html(setores_t *setor){
         if(tipo_nao_econtrado){
         fprintf(stdout, "Nao foi encontrado sensor com o tipo: %s", tipo);
         return;
-        }       
+        }    
+    
+    fprintf(fp, "<p>\n\n</p>\n");
+    fprintf(fp, "</body></html>\n");    
     fclose(fp);
     
 }
@@ -2336,8 +2348,13 @@ void exportar_relatorio_da_media_dos_setores_em_html(setores_t *setor,  int qtd_
     }
     else{
             printf("Sem setores cadastrados.\n");
+            fclose(fp);
             return;
         }
+    
+    fprintf(fp, "<p>\n\n</p>\n");
+    fprintf(fp, "</body></html>\n"); 
+    fclose(fp);
     }
 
     
@@ -2347,7 +2364,7 @@ void exportar_relatorio_de_leitura_por_sensor_em_html(sensores_t *sensor){
         printf("Nome do arquivo: "); 
         fgets(nome_do_arquivo, T_MAX_STR, stdin); 
         retirar_enter(nome_do_arquivo);
-        
+        strcat(nome_do_arquivo, ".html");
         FILE *fp = fopen(nome_do_arquivo,"w");
         if (fp == NULL) {
         printf("Erro ao abrir o arquivo.\n");
@@ -2358,7 +2375,7 @@ void exportar_relatorio_de_leitura_por_sensor_em_html(sensores_t *sensor){
         fprintf(fp, "   <title> Relatorio de media dos Setores </title>\n");
         fprintf(fp, "</head>\n");
         fprintf(fp, "<body>\n");
-        fprintf(fp, "<h1>Sensor [%i]\n</h1>\n");
+        fprintf(fp, "<h1>Sensor [%i]\n</h1>\n", sensor->id_do_sensor);
         if(sensor->numero_da_leitura > 1){
                         fprintf(fp, "<h2>Primeira Leitura: \n</h2>\n");
                         fprintf(fp, "<p>[%s]\n</p>\n", sensor->horario_1);
@@ -2375,5 +2392,8 @@ void exportar_relatorio_de_leitura_por_sensor_em_html(sensores_t *sensor){
                     else{
                         fprintf(fp, "<p>Sem leituras.\n</p>\n");
                     }
-        fclose(fp);
+        
+    fprintf(fp, "<p>\n\n</p>\n");
+    fprintf(fp, "</body></html>\n"); 
+    fclose(fp);
 }
