@@ -108,7 +108,7 @@
     sensores_t *pesquisar_sensor_por_id_no_setor(sensores_t *sensor, int id_sensor_no_setor);
 
     //setores
-    void inserir_sensor_no_setor(sensores_t **sensores_no_setor, sensores_t *tipo_de_sensor);
+    void inserir_sensor_no_setor(sensores_t **sensores_no_setor, sensores_t *tipo_de_sensor, setores_t *setor);
     void remover_sensor(sensores_t **sensor, setores_t *setor_atual);
 
     // funções auxiliares
@@ -120,9 +120,9 @@
     void exportar_industrias_bin(planta_industria_t *industrias, char *nome_arq);
     void ler_industrias_bin(planta_industria_t **industrias, char *nome_arq, int *qtd_industrias);
     void exportar_setores_bin(planta_industria_t *industrias, char *nome_arq);
-    void exportar_tipos_sensores_bin(sensores_t *tipo_sensores, char *nome_arq);
-    void exportar_sensores_bin(sensores_t *sensores_no_setor, char *nome_arq);
-    void exportar_html();
+    void exportar_tipos_sensores_bin(planta_industria_t *industrias, char *nome_arq);
+    void exportar_sensores_bin(planta_industria_t *industrias, char *nome_arq);
+
     //EXPORTANDO EM .TXT
     void exportar_relatorio_de_leitura_por_setor(setores_t *setor,  int qtd_setores_na_planta);
     void exportar_relatorio_de_variacao_por_setor(setores_t *setor);
@@ -155,6 +155,8 @@
 
     //Leitura de dados
     void ler_setores_bin(planta_industria_t *industrias, char *nome_arq);
+    void ler_tipo_sensores_bin(planta_industria_t *industrias, char *nome_arq);
+    void ler_sensores_no_setores_bin(planta_industria_t *industrias, char *nome_arq);
 
 
     int main(){
@@ -265,7 +267,7 @@
                                                                             listar_sensores_por_industria(industria_atual->tipos_de_sensores);
                                                                             printf("Sensor escolhido: ");
                                                                             scanf("%i", &sensor_a_ser_copiado);
-                                                                            inserir_sensor_no_setor(&(setor_atual->sensores_do_setor), criar_uma_copia(pesquisar_sensor_por_id(industria_atual->tipos_de_sensores, sensor_a_ser_copiado), setor_atual->qtd_sensores_no_setor));
+                                                                            inserir_sensor_no_setor(&(setor_atual->sensores_do_setor), criar_uma_copia(pesquisar_sensor_por_id(industria_atual->tipos_de_sensores, sensor_a_ser_copiado), setor_atual->qtd_sensores_no_setor), setor_atual);
                                                                             setor_atual->qtd_sensores_no_setor = setor_atual->qtd_sensores_no_setor + 1;
                                                                             esperar_prosseguir();
                                                                         } 
@@ -549,10 +551,14 @@
                 case 4:
                     exportar_industrias_bin(industrias, "insdustrias.bin");
                     exportar_setores_bin(industrias, "setores.bin");
+                    exportar_tipos_sensores_bin(industrias, "tipos_sensores.bin");
+                    exportar_sensores_bin(industrias, "sensores_do_setor.bin");
                     break;
                 case 5:
                     ler_industrias_bin(&industrias, "insdustrias.bin", &qtd_industrias);
                     ler_setores_bin(industrias, "setores.bin");
+                    ler_tipo_sensores_bin(industrias, "tipos_sensores.bin");
+                    ler_sensores_no_setores_bin(industrias, "sensores_do_setor.bin");
                     break;
                 default:
                     printf("\033[1;31mOpcao invalida!!!\033[0m");
@@ -602,7 +608,8 @@
         return industria_auxiliar;
     }
 
-    void inserir_sensor_no_setor(sensores_t **sensores_no_setor, sensores_t *tipo_de_sensor ){
+    void inserir_sensor_no_setor(sensores_t **sensores_no_setor, sensores_t *tipo_de_sensor, setores_t *setor){
+        tipo_de_sensor->id_do_setor_mae = setor->id_do_setor;
         tipo_de_sensor->prox = *sensores_no_setor;
         *sensores_no_setor = tipo_de_sensor;
 
@@ -792,12 +799,15 @@
         sensor_zerado->tipo[0] = '\0';
         sensor_zerado->variacao_leitura = 0;
         sensor_zerado->media = 0;
+        sensor_zerado->id_da_planta_mae = 99;
+        sensor_zerado->id_do_setor_mae = 99;
         return sensor_zerado;
     }
 
     sensores_t *cadastrar_sensor(planta_industria_t *industria){
         sensores_t *sensor_auxiliar = criar_sensor_de_industria();
         string escolha_temp;
+        sensor_auxiliar->id_da_planta_mae = industria->id_da_planta;
         if(industria-> qtd_sensores_na_planta < 15){
             sensor_auxiliar->id_do_sensor = industria->qtd_sensores_na_planta;
             industria->qtd_sensores_na_planta = industria->qtd_sensores_na_planta + 1; //atualizando a quantidade de sensores na industria selecionada
@@ -876,6 +886,7 @@
     sensores_t *criar_uma_copia(sensores_t *tipo_de_sensor, int qtd_sensores_no_setor){
         sensores_t *sensor_copia = NULL;
         sensor_copia = malloc(sizeof(sensores_t));
+        sensor_copia->id_da_planta_mae = tipo_de_sensor->id_da_planta_mae;
         sensor_copia->id_do_sensor_no_setor = qtd_sensores_no_setor;
         sensor_copia->id_do_sensor = tipo_de_sensor->id_do_sensor;
         strcpy((sensor_copia->tipo), (tipo_de_sensor->tipo));
@@ -1383,27 +1394,30 @@
         fclose(fp);
         
     }
-    void exportar_tipos_sensores_bin(sensores_t *tipo_sensores, char *nome_arq){
+    void exportar_tipos_sensores_bin(planta_industria_t *industrias, char *nome_arq){
         FILE *fp= NULL;
         fp = fopen(nome_arq, "wb");
-
-        while (tipo_sensores)
-        {
-            fwrite(tipo_sensores, sizeof(planta_industria_t), 1, fp);
-            tipo_sensores = tipo_sensores->prox;
-        }
+        for(industrias; industrias != NULL; industrias = industrias->prox){
+            sensores_t *tipo_sensores_aux = industrias->tipos_de_sensores;
+            while (tipo_sensores_aux)
+            {
+                fwrite(tipo_sensores_aux, sizeof(sensores_t), 1, fp);
+                tipo_sensores_aux = tipo_sensores_aux->prox;
+            } 
+        } 
         fclose(fp);
         
     }
-    void exportar_sensores_bin(sensores_t *sensores_no_setor, char *nome_arq){
+    void exportar_sensores_bin(planta_industria_t *industrias, char *nome_arq){
         FILE *fp= NULL;
         fp = fopen(nome_arq, "wb");
-
-        while (sensores_no_setor)
-        {
-            fwrite(sensores_no_setor, sizeof(planta_industria_t), 1, fp);
-            sensores_no_setor = sensores_no_setor->prox;
-        }
+        planta_industria_t *ind_aux = industrias;
+        for(ind_aux; ind_aux != NULL; ind_aux = ind_aux->prox){
+            setores_t *lista_setores_aux = ind_aux->setores_da_planta;
+            for(lista_setores_aux; lista_setores_aux != NULL; lista_setores_aux = lista_setores_aux->prox){  
+                sensores_t *lista_sensores_aux = lista_setores_aux->sensores_do_setor;
+                for(lista_sensores_aux; lista_sensores_aux != NULL; lista_sensores_aux = lista_sensores_aux->prox){ 
+                    fwrite(lista_sensores_aux, sizeof(sensores_t), 1, fp);}}}
         fclose(fp);
         
     }
@@ -1454,6 +1468,68 @@
             }fclose(fp);
         }
         
+    }
+
+    void ler_tipo_sensores_bin(planta_industria_t *industrias, char *nome_arq){
+        FILE *fp= NULL;
+        sensores_t *novo_sensor = NULL;
+        planta_industria_t *ind_aux = industrias;
+        for(ind_aux; ind_aux != NULL; ind_aux = ind_aux->prox){  
+        sensores_t *nova_lista_de_sensores = NULL;
+            fp = fopen(nome_arq, "rb");
+            while (!feof(fp)) {
+                novo_sensor = malloc(sizeof(sensores_t));
+                fread(novo_sensor, sizeof(sensores_t), 1, fp);
+                if(novo_sensor->id_da_planta_mae == ind_aux->id_da_planta){
+                    novo_sensor->prox = NULL;
+                        if (!feof(fp)) {
+                                inserir_sensor_na_industria(&nova_lista_de_sensores, novo_sensor);
+                            }
+                            else {
+                                free(novo_sensor);
+                            }
+            }
+            else{
+                    free(novo_sensor);
+                }
+            }fclose(fp);
+            ind_aux->tipos_de_sensores = nova_lista_de_sensores;
+        }
+    }
+    
+    void ler_sensores_no_setores_bin(planta_industria_t *industrias, char *nome_arq){
+        FILE *fp= NULL;
+        sensores_t *novo_sensor = NULL;
+        planta_industria_t *ind_aux = industrias;
+        for(ind_aux; ind_aux != NULL; ind_aux = ind_aux->prox){
+            setores_t *lista_setores_aux = ind_aux->setores_da_planta;
+            for(lista_setores_aux; lista_setores_aux != NULL; lista_setores_aux = lista_setores_aux->prox){  
+            sensores_t *nova_lista_de_sensores = NULL;
+                fp = fopen(nome_arq, "rb");
+                while (!feof(fp)) {
+                    novo_sensor = malloc(sizeof(sensores_t));
+                    fread(novo_sensor, sizeof(sensores_t), 1, fp);
+                    if(novo_sensor->id_da_planta_mae == ind_aux->id_da_planta){
+                        if(novo_sensor->id_do_setor_mae == lista_setores_aux->id_do_setor){
+                            novo_sensor->prox = NULL;
+                            if (!feof(fp)) {
+                                    inserir_sensor_na_industria(&nova_lista_de_sensores, novo_sensor);
+                                }
+                                else {
+                                    free(novo_sensor);
+                                }
+                        }
+                        else{
+                            free(novo_sensor);
+                        }
+                    }
+                    else{
+                        free(novo_sensor);
+                    }
+                }fclose(fp);
+                lista_setores_aux->sensores_do_setor = nova_lista_de_sensores;
+            }
+        }
     }
 
     void exportar_relatorio_de_leitura_por_setor(setores_t *setor,  int qtd_setores_na_planta){
