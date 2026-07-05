@@ -333,7 +333,12 @@
                                                                                         esperar_prosseguir();
                                                                                         break;
                                                                                     case 8:
-                                                                                        exportar_relatorio_de_variacao_por_setor_em_html(setor_atual);
+                                                                                        exportar_relatorio_de_variacao_por_sensor_em_html(sensor_atual);
+                                                                                        esperar_prosseguir();
+                                                                                        break;
+                                                                                    case 9:
+                                                                                        exportar_relatorio_de_leitura_por_sensor_em_html(sensor_atual);
+                                                                                        esperar_prosseguir();
                                                                                         break;
                                                                                     case 0: break;
                                                                                     default:
@@ -399,7 +404,12 @@
                                                                         esperar_prosseguir();
                                                                         break;
                                                                     case 14:
-                                                                        exportar_relatorio_de_leitura_por_setor_em_html(sensor_atual, industria_atual->qtd_setores_na_planta);
+                                                                        exportar_relatorio_de_leitura_pelo_setor_em_html(setor_atual);
+                                                                        esperar_prosseguir();
+                                                                        break;
+                                                                    case 15:
+                                                                        exportar_relatorio_de_leitura_por_tipo_em_html(setor_atual);
+                                                                        esperar_prosseguir();
                                                                         break;
                                                                     case 0: break;
                                                                     default:
@@ -456,6 +466,15 @@
                                                 case 10:
                                                     exportar_relatorio_da_media_dos_setores_em_csv(industria_atual->setores_da_planta, industria_atual->qtd_setores_na_planta);
                                                     esperar_prosseguir();
+                                                    break;
+                                                case 11:
+                                                    exportar_relatorio_de_leitura_por_setor_em_html(industria_atual->setores_da_planta, industria_atual->qtd_setores_na_planta);
+                                                    esperar_prosseguir();
+                                                    break;
+                                                case 12:
+                                                    exportar_relatorio_da_media_dos_setores_em_html(industria_atual->setores_da_planta, industria_atual->qtd_setores_na_planta);
+                                                    esperar_prosseguir();
+                        
                                                     break;
                                                 case 0: break;
                                                 default:
@@ -642,6 +661,8 @@
         printf("\033[1;32m[ 8 ]\033[0m - Exportar elatorio de media dos setores em txt\n");
         printf("\033[1;32m[ 9 ]\033[0m - Exportar relatorio dos setores em csv\n");
         printf("\033[1;32m[ 10]\033[0m - Exportar relatorio de media dos setores em csv\n");
+        printf("\033[1;32m[ 10]\033[0m - Exportar relatorio de media dos setores em csv\n");
+        printf("\033[1;32m[ 10]\033[0m - Exportar relatorio de media dos setores em csv\n");
         printf("\033[1;32m[ 0 ]\033[0m - Voltar\n");
         printf("\033[1;34mOpcao escolhida:\033[0m ");
         while(scanf("%i", &opcao) != 1){
@@ -735,6 +756,8 @@
         printf("\033[1;32m[ 11 ]\033[0m - Exportar relatorio de leitura pelo setor em csv\n");
         printf("\033[1;32m[ 12 ]\033[0m - Exportar relatorio de leitura por tipo em csv\n");
         printf("\033[1;31m[ 13 ] - REMOVER UM SENSOR]\033[0m\n");
+        printf("\033[1;32m[ 14 ]\033[0m - Exportar relatorio de leitura pelo setor em hmtl\n");
+        printf("\033[1;32m[ 15 ]\033[0m - Exportar relatorio de leitura por tipo em hmtl\n");
         printf("\033[1;32m[ 0 ]\033[0m - Voltar\n");
         printf("\033[1;34mOpcao escolhida:\033[0m ");
         while(scanf("%i", &opcao) != 1){
@@ -903,6 +926,8 @@
         printf("\033[1;32m[ 5 ]\033[0m - Exportar relatorio de variacao\n");
         printf("\033[1;32m[ 6 ]\033[0m - Exportar lista de Leituras em csv\n");
         printf("\033[1;32m[ 7 ]\033[0m - Exportar relatorio de variacao em csv\n");
+        printf("\033[1;32m[ 8 ]\033[0m - Exportar relatorio de variacao em html\n");
+        printf("\033[1;32m[ 9 ]\033[0m - Exportar relatorio de Leituras em html\n");
         printf("\033[1;32m[ 0 ]\033[0m - Voltar\n");
         printf("\033[1;34mOpcao escolhida:\033[0m ");
         while(scanf("%i", &opcao) != 1){
