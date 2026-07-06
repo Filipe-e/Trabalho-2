@@ -19,6 +19,10 @@
         planta_industria_t *industrias = NULL;
         planta_industria_t *industria_zerada = NULL;
         industria_zerada = malloc(sizeof(planta_industria_t));
+        ler_industrias_bin(&industrias, "insdustrias.bin", &qtd_industrias);
+        ler_setores_bin(industrias, "setores.bin");
+        ler_tipo_sensores_bin(industrias, "tipos_sensores.bin");
+        ler_sensores_no_setores_bin(industrias, "sensores_do_setor.bin");
         do{
             limpar_tela();
             opcao_main = menu_industria();
@@ -398,18 +402,6 @@
                     break;
                             
                 case 0: break;
-                case 4:
-                    exportar_industrias_bin(industrias, "insdustrias.bin");
-                    exportar_setores_bin(industrias, "setores.bin");
-                    exportar_tipos_sensores_bin(industrias, "tipos_sensores.bin");
-                    exportar_sensores_bin(industrias, "sensores_do_setor.bin");
-                    break;
-                case 5:
-                    ler_industrias_bin(&industrias, "insdustrias.bin", &qtd_industrias);
-                    ler_setores_bin(industrias, "setores.bin");
-                    ler_tipo_sensores_bin(industrias, "tipos_sensores.bin");
-                    ler_sensores_no_setores_bin(industrias, "sensores_do_setor.bin");
-                    break;
                 default:
                     printf("\033[1;31mOpcao invalida!!!\033[0m");
                     usleep(1000000);
@@ -417,4 +409,8 @@
             }
 
         }while(opcao_main != 0);
+        exportar_industrias_bin(industrias, "insdustrias.bin");
+        exportar_setores_bin(industrias, "setores.bin");
+        exportar_tipos_sensores_bin(industrias, "tipos_sensores.bin");
+        exportar_sensores_bin(industrias, "sensores_do_setor.bin");
     }

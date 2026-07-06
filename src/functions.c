@@ -4,8 +4,8 @@
 #include <unistd.h>
 #include <time.h>
 #include <stdlib.h>
-#include "./Includes/types.h"
-#include "./Includes/functions.h"
+#include "../Includes/types.h"
+#include "../Includes/functions.h"
 
 
     planta_industria_t *criar_planta_de_industria(){
@@ -709,6 +709,7 @@
         FILE *fp= NULL;
         planta_industria_t *nova_industria =NULL;
         fp = fopen(nome_arq, "rb");
+        if(fp == NULL) return;
         while (!feof(fp)) {
         nova_industria = malloc(sizeof(planta_industria_t));
         fread(nova_industria, sizeof(planta_industria_t), 1, fp);
@@ -734,6 +735,7 @@
         for(ind_aux; ind_aux != NULL; ind_aux = ind_aux->prox){  
         setores_t *nova_lista_de_setores = NULL;
             fp = fopen(nome_arq, "rb");
+            if(fp == NULL) return;
             while (!feof(fp)) {
                 novo_setor = malloc(sizeof(setores_t));
                 fread(novo_setor, sizeof(setores_t), 1, fp);
@@ -760,6 +762,7 @@
         for(ind_aux; ind_aux != NULL; ind_aux = ind_aux->prox){  
         sensores_t *nova_lista_de_sensores = NULL;
             fp = fopen(nome_arq, "rb");
+            if(fp == NULL) return;
             while (!feof(fp)) {
                 novo_sensor = malloc(sizeof(sensores_t));
                 fread(novo_sensor, sizeof(sensores_t), 1, fp);
@@ -789,6 +792,7 @@
             for(lista_setores_aux; lista_setores_aux != NULL; lista_setores_aux = lista_setores_aux->prox){  
             sensores_t *nova_lista_de_sensores = NULL;
                 fp = fopen(nome_arq, "rb");
+                if(fp == NULL) return;
                 while (!feof(fp)) {
                     novo_sensor = malloc(sizeof(sensores_t));
                     fread(novo_sensor, sizeof(sensores_t), 1, fp);
