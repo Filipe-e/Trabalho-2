@@ -19,7 +19,7 @@
         planta_industria_t *industrias = NULL;
         planta_industria_t *industria_zerada = NULL;
         industria_zerada = malloc(sizeof(planta_industria_t));
-        ler_industrias_bin(&industrias, "insdustrias.bin", &qtd_industrias);
+        ler_industrias_bin(&industrias, "industrias.bin", &qtd_industrias);
         ler_setores_bin(industrias, "setores.bin");
         ler_tipo_sensores_bin(industrias, "tipos_sensores.bin");
         ler_sensores_no_setores_bin(industrias, "sensores_do_setor.bin");
@@ -409,7 +409,7 @@
             }
 
         }while(opcao_main != 0);
-        exportar_industrias_bin(industrias, "insdustrias.bin");
+        exportar_industrias_bin(industrias, "industrias.bin");
         exportar_setores_bin(industrias, "setores.bin");
         exportar_tipos_sensores_bin(industrias, "tipos_sensores.bin");
         exportar_sensores_bin(industrias, "sensores_do_setor.bin");
