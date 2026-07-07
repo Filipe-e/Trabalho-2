@@ -1448,8 +1448,8 @@ void exportar_relatorio_de_leitura_por_setor_em_html(setores_t *setor,  int qtd_
                         fprintf(fp, "<p>Tipo: %s\n</p>", lista_de_sensores_aux->tipo);
                         fprintf(fp, "<p>Faixa: [%.2f - %.2f]\n</p>", lista_de_sensores_aux->faixa_leitura_1 , lista_de_sensores_aux->faixa_leitura_2);
                         if(lista_de_sensores_aux->numero_da_leitura > 1){
-                            fprintf(fp, "<p>Horario 1: %s\n</p>;", lista_de_sensores_aux->horario_1);
-                            fprintf(fp, "<p>Leitura 1: %.2f\n</p>;", lista_de_sensores_aux->primeira_leitura);
+                            fprintf(fp, "<p>Horario 1: %s\n</p>", lista_de_sensores_aux->horario_1);
+                            fprintf(fp, "<p>Leitura 1: %.2f\n</p>", lista_de_sensores_aux->primeira_leitura);
                             if(lista_de_sensores_aux->numero_da_leitura > 2){
                                 fprintf(fp, "<p>Horario 2: %s\n</p>\n", lista_de_sensores_aux->horario_2);
                                 fprintf(fp, "<p>Leitura 2: %.2f\n</p>\n", lista_de_sensores_aux->segunda_leitura);  
@@ -1547,8 +1547,8 @@ void exportar_relatorio_de_leitura_pelo_setor_em_html(setores_t *setor){
         fprintf(fp, "<p>Tipo: %s\n</p>", lista_de_sensores_aux->tipo);
         fprintf(fp, "<p>Faixa: [%.2f - %.2f]\n</p>", lista_de_sensores_aux->faixa_leitura_1 , lista_de_sensores_aux->faixa_leitura_2);
         if(lista_de_sensores_aux->numero_da_leitura > 1){
-            fprintf(fp, "<p>Horario 1: %s\n</p>;", lista_de_sensores_aux->horario_1);
-            fprintf(fp, "<p>Leitura 1: %.2f\n</p>;", lista_de_sensores_aux->primeira_leitura);
+            fprintf(fp, "<p>Horario 1: %s\n</p>", lista_de_sensores_aux->horario_1);
+            fprintf(fp, "<p>Leitura 1: %.2f\n</p>", lista_de_sensores_aux->primeira_leitura);
             if(lista_de_sensores_aux->numero_da_leitura > 2){
                 fprintf(fp, "<p>Horario 2: %s\n</p>\n", lista_de_sensores_aux->horario_2);
                 fprintf(fp, "<p>Leitura 2: %.2f\n</p>\n", lista_de_sensores_aux->segunda_leitura);  
