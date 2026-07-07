@@ -86,7 +86,7 @@
                                                     if(industria_atual->qtd_setores_na_planta < T_MAX_SETORES){
                                                         inserir_setor_na_industria(&(industria_atual->setores_da_planta), cadastrar_setor(industria_atual));
                                                     }else{
-                                                        printf("\033[31mNumero de setores maximo atingido\033[0m");
+                                                        printf("\033[31mNumero de setores maximo atingido\033[0m\n");
                                                     }
                                                     break;
                                                 // Menu dentro de setor dentro da industria - lista os setores
@@ -125,8 +125,12 @@
                                                                             listar_sensores_por_industria(industria_atual->tipos_de_sensores);
                                                                             printf("Sensor escolhido: ");
                                                                             scanf("%i", &sensor_a_ser_copiado);
-                                                                            inserir_sensor_no_setor(&(setor_atual->sensores_do_setor), criar_uma_copia(pesquisar_sensor_por_id(industria_atual->tipos_de_sensores, sensor_a_ser_copiado), setor_atual->qtd_sensores_no_setor), setor_atual);
-                                                                            setor_atual->qtd_sensores_no_setor = setor_atual->qtd_sensores_no_setor + 1;
+                                                                            if(sensor_a_ser_copiado < industria_atual->qtd_sensores_na_planta){
+                                                                                inserir_sensor_no_setor(&(setor_atual->sensores_do_setor), criar_uma_copia(pesquisar_sensor_por_id(industria_atual->tipos_de_sensores, sensor_a_ser_copiado), setor_atual->qtd_sensores_no_setor), setor_atual);
+                                                                                setor_atual->qtd_sensores_no_setor = setor_atual->qtd_sensores_no_setor + 1;
+                                                                            }else{
+                                                                                printf("\033[31mSensor nao encontrado\033[0m\n");
+                                                                            }
                                                                             esperar_prosseguir();
                                                                         } 
                                                                         else{
