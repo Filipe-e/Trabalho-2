@@ -1,7 +1,7 @@
 #ifndef _MENUS_H
 #define _MENUS_H
 
-#include "./Includes/types.h" 
+#include "types.h" 
     
 int menu_industria(void);
 int menu_setor(int industria_selecionada);

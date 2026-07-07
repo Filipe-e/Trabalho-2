@@ -3,7 +3,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include "./Includes/types.h"
+#include "types.h"
 
 // Industrias
 planta_industria_t *cadastrar_industria(int qtd_industrias);
