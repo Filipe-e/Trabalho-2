@@ -83,7 +83,11 @@
                                                 // Menu dentro de setor dentro da industria - cadastra um setor
                                                 case 1:
                                                     getchar();
-                                                    inserir_setor_na_industria(&(industria_atual->setores_da_planta), cadastrar_setor(industria_atual));
+                                                    if(industria_atual->qtd_setores_na_planta < T_MAX_SETORES){
+                                                        inserir_setor_na_industria(&(industria_atual->setores_da_planta), cadastrar_setor(industria_atual));
+                                                    }else{
+                                                        printf("\033[31mNumero de setores maximo atingido\033[0m");
+                                                    }
                                                     break;
                                                 // Menu dentro de setor dentro da industria - lista os setores
                                                 case 2:   
