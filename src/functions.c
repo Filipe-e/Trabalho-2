@@ -856,22 +856,22 @@
                                 fprintf(fp, "-> %2.f\n", lista_de_sensores_aux->segunda_leitura);
                             }
                             else{
-                                fprintf(fp, "\033[31mAguardando segunda leitura.\033[0m\n");
+                                fprintf(fp, "Aguardando segunda leitura.\n");
                             }
                         }
                         else{
-                            fprintf(fp, "\033[31mSem leituras.\033[0m\n");
+                            fprintf(fp, "Sem leituras.\n");
                         }
                         fprintf(fp, "=================================\n\n"); 
                     }
                 }
                 else{
-                    fprintf(fp, "\033[31mSem sensores cadastrados.\033[0m\n");
+                    fprintf(fp, "Sem sensores cadastrados.\n");
                 }
             }
         }
         else{
-                fprintf(fp, "\033[31mSem setores cadastrados.\033[0m\n");
+                fprintf(fp, "Sem setores cadastrados.\n");
             }
         fclose(fp);   
     }
@@ -1071,22 +1071,22 @@
                                 fprintf(fp, "Media: %.2f\n", lista_de_sensores_aux->media);
                             }
                             else{
-                                fprintf(fp, "\033[1;31mSem leituras suficentes para executar a media\033[0m \n");
+                                fprintf(fp, "Sem leituras suficentes para executar a media \n");
                             }
                         }
                         else{
-                            fprintf(fp, "\033[31mSem leituras.\033[0m\n");
+                            fprintf(fp, "Sem leituras.\n");
                         }
                         fprintf(fp, "=================================\n\n"); 
                     }
                 }
                 else{
-                    fprintf(fp, "\033[31mSem sensores cadastrados.\033[0m\n");
+                    fprintf(fp, "Sem sensores cadastrados.\n");
                 }
             }
         }
         else{
-                fprintf(fp, "\033[31mSem setores cadastrados.\033[0m\n");
+                fprintf(fp, "Sem setores cadastrados.\n");
             }
             fclose(fp);
     }
@@ -1113,11 +1113,11 @@
                             fprintf(fp, "-> %2.f\n", sensor_escolhido->segunda_leitura);
                         }
                         else{
-                            fprintf(fp, "\033[31mAguardando segunda leitura.\033[0m\n");
+                            fprintf(fp, "Aguardando segunda leitura.\n");
                         }
                     }
                     else{
-                        fprintf(fp, "\033[31mSem leituras.\033[0m\n");
+                        fprintf(fp, "Sem leituras.\n");
                     }
                     fprintf(fp, "=================================\n\n"); 
         fclose(fp);
