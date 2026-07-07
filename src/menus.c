@@ -1,11 +1,8 @@
 #include <stdio.h>
-#include <ctype.h>
 #include <string.h>
-#include <unistd.h>
-#include <time.h>
 #include <stdlib.h>
-#include "./Includes/types.h"
-#include "./Includes/menus.h"
+#include "../Includes/types.h"
+#include "../Includes/menus.h"
 
 int menu_industria(void){
     int opcao;
@@ -118,7 +115,7 @@ int menu_sensores(int industria_selecionada){
 }
 int menu_sensor_selecionado(void){
     int opcao;
-    
+
     printf("\t| Menu - Monitoramento |\n");
     printf("\033[1;32m[ 1 ]\033[0m - Efetuar Leitura\n");
     printf("\033[1;32m[ 2 ]\033[0m - Listar Leituras\n");
