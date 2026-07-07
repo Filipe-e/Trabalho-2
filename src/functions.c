@@ -24,7 +24,7 @@
         industria_auxiliar->id_da_planta = qtd_industrias;
         printf("Cadastrando a industria: %i\n", industria_auxiliar->id_da_planta);
         printf("\033[1;32mCadastro realizado com sucesso!!\033[0m\t\n");
-        usleep(15000);
+        usleep(1500000);
         return industria_auxiliar;
     }
 
